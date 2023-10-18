@@ -1,10 +1,23 @@
 import { useState } from 'react'
 
-const Content = (props) => {
+const Content = (props) => <div>{props.person.name} {props.person.number}</div>
+const Filter = (props) => <div>filter shown with <input onChange={props.handle} value={props.value} /></div>
+const PersonForm = (props) => {
   return (
-    <div>{props.person.name} {props.person.number}</div>
+    <form>
+      <div>
+        name: <input onChange={props.handleNewName} value={props.newName} />
+      </div>
+      <div>
+        number: <input onChange={props.handleNewNumber} value={props.newNumber} />
+      </div>
+      <div>
+        <button type="submit" onClick={props.addName}>add</button>
+      </div>
+    </form>
   )
 }
+const Persons = (props) => props.persons.filter(x => props.regexNameFilter.test(x.name)).map(person => <Content person={person} key={person.id} />)
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -27,7 +40,6 @@ const App = () => {
   const handleNameFilter = (event) => {
     setNameFilter(event.target.value)
   }
-
   const addName = (event) => {
     event.preventDefault()
     if (persons.map(x => x.name).includes(newName)) {
@@ -47,23 +59,11 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        filter shown with <input onChange={handleNameFilter} value={nameFilter} />
-      </div>
-      <h2>add a new</h2>
-      <form>
-        <div>
-          name: <input onChange={handleNewName} value={newName} />
-        </div>
-        <div>
-          number: <input onChange={handleNewNumber} value={newNumber} />
-        </div>
-        <div>
-          <button type="submit" onClick={addName}>add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      {persons.filter(x => regexNameFilter.test(x.name)).map(person => <Content person={person} key={person.name} />)}
+      <Filter handle={handleNameFilter} value={nameFilter} />
+      <h3>add a new</h3>
+      <PersonForm handleNewName={handleNewName} handleNewNumber={handleNewNumber} newName={newName} newNumber={newNumber} addName={addName} />
+      <h3>Numbers</h3>
+      <Persons persons={persons} regexNameFilter={regexNameFilter} />
     </div>
   )
 }
