@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import personService from './services/persons'
 
 const Content = (props) => <div>{props.person.name} {props.person.number}</div>
 const Filter = (props) => <div>filter shown with <input onChange={props.handle} value={props.value} /></div>
@@ -23,8 +24,11 @@ const Persons = (props) => props.persons.filter(x => props.regexNameFilter.test(
 const App = () => {
   const [persons, setPersons] = useState([])
   useEffect(()=>{
-    axios.get("http://localhost:3001/persons")
-    .then(response => setPersons(response.data))
+    personService
+    .getAll()
+    .then(responseData => {
+      setPersons(responseData)
+    })
   },[])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
@@ -51,14 +55,16 @@ const App = () => {
         number: newNumber,
         id: persons.length + 1
       }
-      axios.post("http://localhost:3001/persons", personObject)
-      .then( response => {
-        setPersons(persons.concat(response.data))
+      personService
+      .create(personObject)
+      .then( responseData => {
+        setPersons(persons.concat(responseData))
         setNewName('')
         setNewNumber('')
       })
     }
   }
+  
   return (
     <div>
       <h2>Phonebook</h2>
