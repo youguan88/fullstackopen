@@ -56,7 +56,17 @@ const App = () => {
   const addName = (event) => {
     event.preventDefault()
     if (persons.map(x => x.name).includes(newName)) {
-      window.alert(`${newName} is already added to phonebook`)
+      if(window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`))
+      {
+        const person = persons.find(x=> x.name === newName)
+        const personObj = {...person, number: newNumber}
+        personService.update(personObj.id, personObj)
+        .then(responseData => {
+          setPersons(persons.map(p=> p.id !== personObj.id ? p : responseData))
+          setNewName('')
+          setNewNumber('')
+        })
+      }
     }
     else {
       const maxID = Math.max(...persons.map(x => x.id))
