@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 import personService from './services/persons'
 
-const Content = (props) => <div>{props.person.name} {props.person.number}</div>
+const Content = ({ person, handleDeleteBtn }) => {
+  return (
+    <div>{person.name} {person.number} <button onClick={handleDeleteBtn}>delete</button></div>
+  )
+}
 const Filter = (props) => <div>filter shown with <input onChange={props.handle} value={props.value} /></div>
 const PersonForm = (props) => {
   return (
@@ -19,17 +22,23 @@ const PersonForm = (props) => {
     </form>
   )
 }
-const Persons = (props) => props.persons.filter(x => props.regexNameFilter.test(x.name)).map(person => <Content person={person} key={person.id} />)
-
+const Persons = (props) => {
+  return (
+    props.persons
+      .filter(x => props.regexNameFilter
+        .test(x.name))
+      .map(person => <Content person={person} key={person.id} handleDeleteBtn={() => props.handleDeleteBtn(person)} />)
+  )
+}
 const App = () => {
   const [persons, setPersons] = useState([])
-  useEffect(()=>{
+  useEffect(() => {
     personService
-    .getAll()
-    .then(responseData => {
-      setPersons(responseData)
-    })
-  },[])
+      .getAll()
+      .then(responseData => {
+        setPersons(responseData)
+      })
+  }, [])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [nameFilter, setNameFilter] = useState('')
@@ -50,21 +59,30 @@ const App = () => {
       window.alert(`${newName} is already added to phonebook`)
     }
     else {
+      const maxID = Math.max(...persons.map(x => x.id))
       const personObject = {
         name: newName,
         number: newNumber,
-        id: persons.length + 1
+        id: maxID + 1
       }
       personService
-      .create(personObject)
-      .then( responseData => {
-        setPersons(persons.concat(responseData))
-        setNewName('')
-        setNewNumber('')
-      })
+        .create(personObject)
+        .then(responseData => {
+          setPersons(persons.concat(responseData))
+          setNewName('')
+          setNewNumber('')
+        })
     }
   }
-  
+  const handleDeleteBtn = (person) => {
+    if (window.confirm(`Delete ${person.name} ?`)) {
+      personService.remove(person.id)
+        .then(() =>
+          setPersons(persons.filter(x => x.id !== person.id))
+        )
+    }
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -72,7 +90,7 @@ const App = () => {
       <h3>add a new</h3>
       <PersonForm handleNewName={handleNewName} handleNewNumber={handleNewNumber} newName={newName} newNumber={newNumber} addName={addName} />
       <h3>Numbers</h3>
-      <Persons persons={persons} regexNameFilter={regexNameFilter} />
+      <Persons persons={persons} regexNameFilter={regexNameFilter} handleDeleteBtn={handleDeleteBtn} />
     </div>
   )
 }
