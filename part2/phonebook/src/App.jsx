@@ -30,6 +30,30 @@ const Persons = (props) => {
       .map(person => <Content person={person} key={person.id} handleDeleteBtn={() => props.handleDeleteBtn(person)} />)
   )
 }
+const Notification = ({ message }) => {
+  const notificationStyle = {
+    color: 'green',
+    background: 'lightgrey',
+    fontSize: '20px',
+    borderStyle: 'solid',
+    borderradius: '5px',
+    padding: '20px',
+    marginbottom: '20px'
+  }
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <>
+    <div style={notificationStyle}>
+      {message}
+    </div>
+    <br></br>
+    </>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([])
   useEffect(() => {
@@ -43,7 +67,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [nameFilter, setNameFilter] = useState('')
   const regexNameFilter = new RegExp(nameFilter, 'i')
-
+  const [notification, setNotification] = useState(null)
   const handleNewName = (event) => {
     setNewName(event.target.value)
   }
@@ -63,6 +87,10 @@ const App = () => {
         personService.update(personObj.id, personObj)
         .then(responseData => {
           setPersons(persons.map(p=> p.id !== personObj.id ? p : responseData))
+          setNotification(`Changed number for ${person.name}`)
+          setTimeout(() => {
+            setNotification(null)
+          }, 5000)
           setNewName('')
           setNewNumber('')
         })
@@ -79,6 +107,10 @@ const App = () => {
         .create(personObject)
         .then(responseData => {
           setPersons(persons.concat(responseData))
+          setNotification(`Added ${responseData.name}`)
+          setTimeout(() => {
+            setNotification(null)
+          }, 5000)
           setNewName('')
           setNewNumber('')
         })
@@ -96,6 +128,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notification}/>
       <Filter handle={handleNameFilter} value={nameFilter} />
       <h3>add a new</h3>
       <PersonForm handleNewName={handleNewName} handleNewNumber={handleNewNumber} newName={newName} newNumber={newNumber} addName={addName} />

@@ -2,7 +2,7 @@
   "persons": [
     {
       "name": "Arto Hellas",
-      "number": "000",
+      "number": "655555555",
       "id": 1
     },
     {
@@ -24,6 +24,11 @@
       "name": "Emily Hopkins",
       "number": "22-55555-555",
       "id": 6
+    },
+    {
+      "name": "todelete",
+      "number": "444444",
+      "id": 7
     }
   ]
 }
