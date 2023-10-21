@@ -30,9 +30,10 @@ const Persons = (props) => {
       .map(person => <Content person={person} key={person.id} handleDeleteBtn={() => props.handleDeleteBtn(person)} />)
   )
 }
-const Notification = ({ message }) => {
+const Notification = ({ message, isSuccess }) => {
+  let messageColor = isSuccess === true ? 'green' : 'red'
   const notificationStyle = {
-    color: 'green',
+    color: messageColor,
     background: 'lightgrey',
     fontSize: '20px',
     borderStyle: 'solid',
@@ -46,10 +47,10 @@ const Notification = ({ message }) => {
 
   return (
     <>
-    <div style={notificationStyle}>
-      {message}
-    </div>
-    <br></br>
+      <div style={notificationStyle}>
+        {message}
+      </div>
+      <br></br>
     </>
   )
 }
@@ -67,7 +68,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [nameFilter, setNameFilter] = useState('')
   const regexNameFilter = new RegExp(nameFilter, 'i')
-  const [notification, setNotification] = useState(null)
+  const [notification, setNotification] = useState({ message: null, isSuccess: true })
   const handleNewName = (event) => {
     setNewName(event.target.value)
   }
@@ -80,20 +81,32 @@ const App = () => {
   const addName = (event) => {
     event.preventDefault()
     if (persons.map(x => x.name).includes(newName)) {
-      if(window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`))
-      {
-        const person = persons.find(x=> x.name === newName)
-        const personObj = {...person, number: newNumber}
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        const person = persons.find(x => x.name === newName)
+        const personObj = { ...person, number: newNumber }
         personService.update(personObj.id, personObj)
-        .then(responseData => {
-          setPersons(persons.map(p=> p.id !== personObj.id ? p : responseData))
-          setNotification(`Changed number for ${person.name}`)
-          setTimeout(() => {
-            setNotification(null)
-          }, 5000)
-          setNewName('')
-          setNewNumber('')
-        })
+          .then(responseData => {
+            setPersons(persons.map(p => p.id !== personObj.id ? p : responseData))
+            let messageObject = { message: `Changed number for ${person.name}`, isSuccess: true }
+            setNotification(messageObject)
+            setTimeout(() => {
+              messageObject.message = null
+              setNotification(messageObject)
+            }, 5000)
+            setNewName('')
+            setNewNumber('')
+          })
+          .catch(error => {
+            if (error.request.status === 404) {
+              let messageObject = { message: `Information of ${person.name} has already been removed from server`, isSuccess: false }
+              setNotification(messageObject)
+              setTimeout(() => {
+                messageObject.message = null
+                setNotification(messageObject)
+              }, 5000)
+            }
+          }
+          )
       }
     }
     else {
@@ -107,9 +120,11 @@ const App = () => {
         .create(personObject)
         .then(responseData => {
           setPersons(persons.concat(responseData))
-          setNotification(`Added ${responseData.name}`)
+          let messageObject = { message: `Added ${responseData.name}`, isSuccess: true }
+          setNotification(messageObject)
           setTimeout(() => {
-            setNotification(null)
+            messageObject.name = null
+            setNotification(messageObject)
           }, 5000)
           setNewName('')
           setNewNumber('')
@@ -122,13 +137,23 @@ const App = () => {
         .then(() =>
           setPersons(persons.filter(x => x.id !== person.id))
         )
+        .catch(error => {
+          if (error.request.status === 404) {
+            let messageObject = { message: `Information of ${person.name} has already been removed from server`, isSuccess: false }
+            setNotification(messageObject)
+            setTimeout(() => {
+              messageObject.message = null
+              setNotification(messageObject)
+            }, 5000)
+          }
+        })
     }
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={notification}/>
+      <Notification message={notification.message} isSuccess={notification.isSuccess} />
       <Filter handle={handleNameFilter} value={nameFilter} />
       <h3>add a new</h3>
       <PersonForm handleNewName={handleNewName} handleNewNumber={handleNewNumber} newName={newName} newNumber={newNumber} addName={addName} />
