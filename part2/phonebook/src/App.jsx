@@ -30,8 +30,8 @@ const Persons = (props) => {
       .map(person => <Content person={person} key={person.id} handleDeleteBtn={() => props.handleDeleteBtn(person)} />)
   )
 }
-const Notification = ({ message, isSuccess }) => {
-  let messageColor = isSuccess === true ? 'green' : 'red'
+const Notification = ({ notification }) => {
+  let messageColor = notification.isSuccess === true ? 'green' : 'red'
   const notificationStyle = {
     color: messageColor,
     background: 'lightgrey',
@@ -41,14 +41,15 @@ const Notification = ({ message, isSuccess }) => {
     padding: '20px',
     marginbottom: '20px'
   }
-  if (message === null) {
+  if (notification.message === null) {
+    console.log("null")
     return null
   }
 
   return (
     <>
       <div style={notificationStyle}>
-        {message}
+        {notification.message}
       </div>
       <br></br>
     </>
@@ -90,7 +91,7 @@ const App = () => {
             let messageObject = { message: `Changed number for ${person.name}`, isSuccess: true }
             setNotification(messageObject)
             setTimeout(() => {
-              messageObject.message = null
+              messageObject = { message: null, isSuccess: true }
               setNotification(messageObject)
             }, 5000)
             setNewName('')
@@ -101,7 +102,14 @@ const App = () => {
               let messageObject = { message: `Information of ${person.name} has already been removed from server`, isSuccess: false }
               setNotification(messageObject)
               setTimeout(() => {
-                messageObject.message = null
+                messageObject = { message: null, isSuccess: true }
+                setNotification(messageObject)
+              }, 5000)
+            } else {
+              let messageObject = { message: error.response.data.error, isSuccess: false }
+              setNotification(messageObject)
+              setTimeout(() => {
+                messageObject = { message: null, isSuccess: true }
                 setNotification(messageObject)
               }, 5000)
             }
@@ -123,11 +131,20 @@ const App = () => {
           let messageObject = { message: `Added ${responseData.name}`, isSuccess: true }
           setNotification(messageObject)
           setTimeout(() => {
-            messageObject.name = null
+            messageObject = { message: null, isSuccess: true }
             setNotification(messageObject)
+            console.log(notification)
           }, 5000)
           setNewName('')
           setNewNumber('')
+        })
+        .catch(error => {
+          let messageObject = { message: error.response.data.error, isSuccess: false }
+          setNotification(messageObject)
+          setTimeout(() => {
+            messageObject = { message: null, isSuccess: true }
+            setNotification(messageObject)
+          }, 5000)
         })
     }
   }
@@ -142,7 +159,7 @@ const App = () => {
             let messageObject = { message: `Information of ${person.name} has already been removed from server`, isSuccess: false }
             setNotification(messageObject)
             setTimeout(() => {
-              messageObject.message = null
+              messageObject = { message: null, isSuccess: true }
               setNotification(messageObject)
             }, 5000)
           }
@@ -153,7 +170,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={notification.message} isSuccess={notification.isSuccess} />
+      <Notification notification={notification} />
       <Filter handle={handleNameFilter} value={nameFilter} />
       <h3>add a new</h3>
       <PersonForm handleNewName={handleNewName} handleNewNumber={handleNewNumber} newName={newName} newNumber={newNumber} addName={addName} />
