@@ -1,3 +1,5 @@
+var _ = require('lodash')
+
 const dummy = (blogs) => {
     return 1
   }
@@ -11,9 +13,19 @@ const dummy = (blogs) => {
     .map(({title, author, likes}) => ({title, author, likes}))
     .reduce((accumulator, currentValue) => {return currentValue.likes >= accumulator.likes ? currentValue : accumulator}, {likes:0})
   }
+
+  const mostBlogs = (blogs) => {
+    return _.chain(blogs)
+    .countBy(x=>x.author)
+    .toPairs()
+    .value()
+    .map((x)=> ({'author': x[0], 'blogs': x[1]}))
+    .reduce((accumulator, currentValue) => {return currentValue.blogs >= accumulator.blogs ? currentValue : accumulator}, {blogs:0})
+  }
   
   module.exports = {
     dummy,
     totalLikes,
-    favouriteBlog
+    favouriteBlog,
+    mostBlogs
   }
