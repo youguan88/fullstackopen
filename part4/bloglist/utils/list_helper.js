@@ -22,10 +22,22 @@ const dummy = (blogs) => {
     .map((x)=> ({'author': x[0], 'blogs': x[1]}))
     .reduce((accumulator, currentValue) => {return currentValue.blogs >= accumulator.blogs ? currentValue : accumulator}, {blogs:0})
   }
+
+  const mostLikes = (blogs) => {
+    return _(blogs)
+    .groupBy('author')
+    .map((list, author) => ({
+      author: author,
+      likes: _.sumBy(list, 'likes')
+    }))
+    .value()
+    .reduce((accumulator, currentValue) => {return currentValue.likes >= accumulator.likes ? currentValue : accumulator}, {likes:0})
+  }
   
   module.exports = {
     dummy,
     totalLikes,
     favouriteBlog,
-    mostBlogs
+    mostBlogs,
+    mostLikes
   }
