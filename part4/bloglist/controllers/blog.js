@@ -1,3 +1,4 @@
+const { request } = require('../app')
 const Blog = require('../models/blog')
 const blogsRouter = require('express').Router()
 
@@ -14,6 +15,18 @@ blogsRouter.post('/api/blogs', async (request, response) => {
     else{
         const savedBlog = await blog.save()
         response.status(201).json(savedBlog)
+    }
+})
+
+blogsRouter.delete('/api/blogs/:id', async(request, response) => {
+    const id = request.params.id
+    if (!id){
+        response.status(400).json({error:"id is not provided"})
+    }
+    else
+    {
+        await Blog.findByIdAndDelete(id)
+        response.send(204).end()
     }
 })
 

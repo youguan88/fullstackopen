@@ -4,6 +4,7 @@ const app = require('../app')
 
 const api = supertest(app)
 const Blog = require('../models/blog')
+const { first } = require('lodash')
 const blogs = [
     {
         title: "React patterns",
@@ -99,6 +100,16 @@ describe('api', () => {
         }]
         await api.post('/api/blogs').send(newBlogs[0]).expect(400)
         await api.post('/api/blogs').send(newBlogs[1]).expect(400)
+    })
+
+    test('delete is valid', async () => {
+        const returnedBlogs = await api.get('/api/blogs')
+        const firstID = returnedBlogs.body[0].id
+        await api.delete(`/api/blogs/${firstID}`).expect(204)
+        
+        const newReturnedBlogs = await api.get('/api/blogs')
+        expect(newReturnedBlogs.body).toHaveLength(returnedBlogs.body.length - 1)
+        expect(newReturnedBlogs.body.map(x=> x.id)).not.toContain(firstID)
     })
 
     afterAll(async () => {
