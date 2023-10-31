@@ -86,6 +86,21 @@ describe('api', () => {
         likes.map(like => expect(like).toBeGreaterThanOrEqual(0))
     })
 
+    test('post blogs with missing title or url returns 400',async ()=>{
+        const newBlogs = [{
+            author: "New author",
+            url: "http://abc.com",
+            likes: 3,
+        },
+        {
+            title: "ABC",
+            author: "New author",
+            likes: 3,
+        }]
+        await api.post('/api/blogs').send(newBlogs[0]).expect(400)
+        await api.post('/api/blogs').send(newBlogs[1]).expect(400)
+    })
+
     afterAll(async () => {
         await mongoose.connection.close()
     })
