@@ -56,4 +56,13 @@ describe('api', () => {
         .expect(200)
         .expect('Content-Type',/application\/json/)
     })
+
+    test('get returns id in response',async ()=>{
+        let blogs = await api.get('/api/blogs')
+        expect(blogs.body[0].id).toBeDefined()
+    })
+
+    afterAll(async () => {
+        await mongoose.connection.close()
+    })
 })
