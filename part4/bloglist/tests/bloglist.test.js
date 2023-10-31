@@ -39,7 +39,6 @@ const blogs = [
         title: "Type wars",
         author: "Robert C. Martin",
         url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
-        likes: 2,
     }
 ]
 
@@ -78,6 +77,13 @@ describe('api', () => {
         expect(returnedBlogs.body).toHaveLength(blogs.length + 1)
         const titles = returnedBlogs.body.map(x=>x.title)
         expect(titles).toContain('ABC')
+    })
+
+    test('likes should default to 0 if property is missing from request',async ()=>{
+        let returnedBlogs = await api.get('/api/blogs')
+        expect(returnedBlogs.body).toHaveLength(blogs.length)
+        let likes = returnedBlogs.body.map(x=>x.likes) 
+        likes.map(like => expect(like).toBeGreaterThanOrEqual(0))
     })
 
     afterAll(async () => {
