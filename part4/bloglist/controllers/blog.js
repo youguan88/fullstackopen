@@ -30,4 +30,25 @@ blogsRouter.delete('/api/blogs/:id', async(request, response) => {
     }
 })
 
+blogsRouter.put('/api/blogs/:id', async(request, response) => {
+    const id = request.params.id
+    const body = request.body
+    const blog = {
+        title: body.title,
+        author: body.author,
+        url: body.url,
+        likes: body.likes
+    }
+    if (!id){
+        response.status(400).json({error:"id is not provided"})
+    }
+    else
+    {
+        await Blog.findByIdAndUpdate(id, blog, {new:true})
+        response.send(204).end()
+    }
+})
+
+
+
 module.exports = blogsRouter

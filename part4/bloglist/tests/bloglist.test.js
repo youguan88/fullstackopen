@@ -106,10 +106,22 @@ describe('api', () => {
         const returnedBlogs = await api.get('/api/blogs')
         const firstID = returnedBlogs.body[0].id
         await api.delete(`/api/blogs/${firstID}`).expect(204)
-        
+
         const newReturnedBlogs = await api.get('/api/blogs')
         expect(newReturnedBlogs.body).toHaveLength(returnedBlogs.body.length - 1)
         expect(newReturnedBlogs.body.map(x=> x.id)).not.toContain(firstID)
+    })
+
+    test('update is valid', async () => {
+        const returnedBlogs = await api.get('/api/blogs')
+        const firstID = returnedBlogs.body[0].id
+        const newLikes = 100
+        const requestBody = {...returnedBlogs[0], likes: newLikes}
+        await api.put(`/api/blogs/${firstID}`).send(requestBody).expect(204)
+        
+        const newReturnedBlogs = await api.get('/api/blogs')
+        const updatedBlog = newReturnedBlogs.body.filter(blog => blog.id === firstID)
+        expect(updatedBlog[0].likes).toBe(newLikes)
     })
 
     afterAll(async () => {
