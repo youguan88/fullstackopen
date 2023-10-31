@@ -62,6 +62,24 @@ describe('api', () => {
         expect(blogs.body[0].id).toBeDefined()
     })
 
+    test('post returns total number + 1 and correct content added', async () => {
+        const newBlog = {
+            title: "ABC",
+            author: "New author",
+            url: "http://abc.com",
+            likes: 3,
+        }
+        await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+        let returnedBlogs = await api.get('/api/blogs')
+        expect(returnedBlogs.body).toHaveLength(blogs.length + 1)
+        const titles = returnedBlogs.body.map(x=>x.title)
+        expect(titles).toContain('ABC')
+    })
+
     afterAll(async () => {
         await mongoose.connection.close()
     })
