@@ -1,6 +1,6 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImVtaWx5IiwiaWQiOiI2NTQyNWFkOWMxYzM2MWM3ZGJlYjA2OGQiLCJpYXQiOjE2OTg5MjQ2Nzh9.7OWJxG9o0t0Q2a4hP6VsOgVvQvp76wzRfhDRMktD0to
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImVtaWx5IiwiaWQiOiI2NTQyNWFkOWMxYzM2MWM3ZGJlYjA2OGQiLCJpYXQiOjE2OTg5MzMzNDN9.eER8ZhGbHB75r32mu1M7jzsskI_9bCYQm9E6McBripE
 
 {
     "title": "Test token middleware",

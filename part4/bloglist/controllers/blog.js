@@ -10,16 +10,11 @@ blogsRouter.get('/', async (request, response) => {
 
 blogsRouter.post('/', async (request, response) => {
     const blog = new Blog(request.body)
-    const decodedToken = jwt.verify(request.token, process.env.SECRET)
-    if(!decodedToken.id)
-    {
-        return response.status(401).json({error:"Invalid Token"})
-    }
     if (!blog.title || !blog.url){
         response.status(400).json(request.body)
     }
     else{
-        const user = await User.findById(decodedToken.id)
+        const user = request.user
         blog.user = user.id
         const savedBlog = await blog.save()
         user.blogs = user.blogs.concat(savedBlog._id)
@@ -30,19 +25,24 @@ blogsRouter.post('/', async (request, response) => {
 
 blogsRouter.delete('/:id', async(request, response) => {
     const id = request.params.id
+    const user = request.user
     if (!id){
         response.status(400).json({error:"id is not provided"})
+    }
+    else if (!user) {
+        response.status(400).json({error:"user does not exists"})
     }
     else
     {
         const blog = await Blog.findById(id)
-        const decodedToken = jwt.verify(request.token, process.env.SECRET)
-        const user = await User.findById(decodedToken.id)
-        if (!blog || !blog.user || !user || blog.user.toString() !== user._id.toString())
+        if (!blog || !blog.user)
         {
+            response.status(400).json({error:"blog does not exist"})
+        }
+        else if (blog.user.toString() !== user._id.toString()){
             response.status(400).json({error:"User does not match"})
         }
-        else{
+        else {
             await Blog.findByIdAndDelete(id)
             response.sendStatus(204).end()
         }
