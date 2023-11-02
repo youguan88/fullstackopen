@@ -3,12 +3,12 @@ const User = require('../models/user')
 const blogsRouter = require('express').Router()
 const jwt = require('jsonwebtoken')
 
-blogsRouter.get('/api/blogs', async (request, response) => {
+blogsRouter.get('/', async (request, response) => {
     const blogs = await Blog.find({}).populate('user', {username:1, name:1})
     response.json(blogs)
 })
 
-blogsRouter.post('/api/blogs', async (request, response) => {
+blogsRouter.post('/', async (request, response) => {
     const blog = new Blog(request.body)
     const decodedToken = jwt.verify(request.token, process.env.SECRET)
     if(!decodedToken.id)
@@ -28,19 +28,28 @@ blogsRouter.post('/api/blogs', async (request, response) => {
     }
 })
 
-blogsRouter.delete('/api/blogs/:id', async(request, response) => {
+blogsRouter.delete('/:id', async(request, response) => {
     const id = request.params.id
     if (!id){
         response.status(400).json({error:"id is not provided"})
     }
     else
     {
-        await Blog.findByIdAndDelete(id)
-        response.send(204).end()
+        const blog = await Blog.findById(id)
+        const decodedToken = jwt.verify(request.token, process.env.SECRET)
+        const user = await User.findById(decodedToken.id)
+        if (!blog || !blog.user || !user || blog.user.toString() !== user._id.toString())
+        {
+            response.status(400).json({error:"User does not match"})
+        }
+        else{
+            await Blog.findByIdAndDelete(id)
+            response.sendStatus(204).end()
+        }
     }
 })
 
-blogsRouter.put('/api/blogs/:id', async(request, response) => {
+blogsRouter.put('/:id', async(request, response) => {
     const id = request.params.id
     const body = request.body
     const blog = {
