@@ -1,8 +1,9 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: Bearer aaa
 
 {
-    "title": "Make a blog",
+    "title": "Test Authorization",
     "author": "Terry Alman",
     "url": "www.terryalaman.com",
     "likes": 50
