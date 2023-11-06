@@ -3,6 +3,28 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
+const Notification = ({ notification }) => {
+  let messageColor = notification.isSuccess === true ? 'green' : 'red'
+  const notificationStyle = {
+    color: messageColor,
+    background: 'lightgrey',
+    fontSize: '20px',
+    borderStyle: 'solid',
+    borderradius: '5px',
+    padding: '20px',
+    marginbottom: '20px'
+  }
+  if (notification.message === null) {
+    return null
+  } else {
+    return (
+      <div style={notificationStyle}>
+        {notification.message}
+      </div>
+    )
+  }
+}
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
@@ -11,6 +33,7 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [notification, setNotification] = useState({ message: null, isSuccess: null })
 
   useEffect(() => {
     const loggedInUser = window.localStorage.getItem('loggedInUser')
@@ -18,19 +41,22 @@ const App = () => {
       const user = JSON.parse(loggedInUser)
       setUser(user)
       blogService.setToken(user.token)
+      blogService.getAll().then(blogs =>
+        setBlogs(blogs)
+      )
     }
 
   }, [])
 
-  useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs(blogs)
-    )
-  }, [])
+  const setTempNotification = ({message, isSuccess}) => {
+    setNotification({message, isSuccess})
+    setTimeout(() => {
+      setNotification({message: null, isSuccess: null})
+    }, 5000)
+  }
 
   const blogSection = () => (
     <div>
-      <h2>blogs</h2>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
@@ -48,42 +74,51 @@ const App = () => {
       setUsername('')
       setPassword('')
       blogService.getAll().then(blogs => setBlogs(blogs))
+      setTempNotification({message:"Login successful", isSuccess: true})
     } catch (exception) {
       console.log(exception)
+      setTempNotification({message: "Wrong username or password", isSuccess: false})
     }
   }
 
-  const handleLogout = async(event) => {
+  const handleLogout = async () => {
     try {
       window.localStorage.clear()
       blogService.setToken(user.token)
       setUser(null)
       setBlogs([])
+      setTempNotification({message:"Logout successful", isSuccess: true})
     }
     catch (exception) {
       console.log(exception)
+      setTempNotification({message:"Logout unsuccessful", isSuccess: false})
     }
   }
 
-  const handleCreateBlog = async(event) => {
+  const handleCreateBlog = async (event) => {
     event.preventDefault()
     try {
-      const blog = {title,author, url}
+      const blog = { title, author, url }
       const newblog = await blogService.create(blog)
       console.log(newblog)
       setTitle('')
       setAuthor('')
       setUrl('')
       setBlogs(blogs.concat(newblog))
+      setTempNotification({
+        message:`a new blog ${newblog.title} by ${newblog.author} added`, 
+        isSuccess: true
+      })
     }
     catch (exception) {
       console.log(exception)
+      setTempNotification({message:"add new blog unsuccessful", isSuccess: false})
     }
   }
 
   const loginForm = () => (
     <div>
-      <h2>Log in to application</h2>
+
       <form onSubmit={handleLogin}>
         <div>
           username
@@ -112,9 +147,9 @@ const App = () => {
     <div>
       <h2>create new</h2>
       <form onSubmit={handleCreateBlog}>
-        <div>title:<input type="text" value={title} name="title" onChange={({target}) => setTitle(target.value)}/></div>
-        <div>author:<input type="text" value={author} name="author" onChange={({target}) => setAuthor(target.value)}/></div>
-        <div>url:<input type="text" value={url} name="url" onChange={({target}) => setUrl(target.value)}/></div>
+        <div>title:<input type="text" value={title} name="title" onChange={({ target }) => setTitle(target.value)} /></div>
+        <div>author:<input type="text" value={author} name="author" onChange={({ target }) => setAuthor(target.value)} /></div>
+        <div>url:<input type="text" value={url} name="url" onChange={({ target }) => setUrl(target.value)} /></div>
         <button type="submit">create</button>
       </form>
     </div>
@@ -122,15 +157,24 @@ const App = () => {
 
   return (
     <div>
-      {!user && loginForm()}
-      {user && <div>
-        <p>
-          {user.name} logged in
-          <button onClick={handleLogout}>logout</button>
-        </p>
-        {createBlogForm()}
-        {blogSection()}
-      </div>
+      {!user &&
+        <div>
+          <h2>Log in to application</h2>
+          <Notification notification={notification}/>
+          {loginForm()}
+        </div>
+      }
+      {user &&
+        <div>
+          <h2>blogs</h2>
+          <Notification notification={notification}/>
+          <p>
+            {user.name} logged in
+            <button onClick={handleLogout}>logout</button>
+          </p>
+          {createBlogForm()}
+          {blogSection()}
+        </div>
       }
     </div>
   )
