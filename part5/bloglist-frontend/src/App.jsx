@@ -56,8 +56,15 @@ const App = () => {
 
   const blogSection = () => (
     <div>
-      {blogs.sort((a,b)=> b.likes - a.likes).map(blog =>
-        <Blog key={blog.id} blog={blog} handleLikes={()=>updateLikes(blog)}/>
+      {blogs
+      .sort((a,b)=> b.likes - a.likes)
+      .map(blog =>
+        <Blog 
+        key={blog.id} 
+        blog={blog} 
+        user={user}
+        handleLikes={()=>updateLikes(blog)}
+        handleDelete={()=>deleteBlog(blog)}/>
       )}
     </div>
   )
@@ -114,9 +121,23 @@ const App = () => {
   const updateLikes = async (blog) => {
     try
     {
-      const updateblog = {...blog, likes : blog.likes + 1, user: blog.user.id}
-      await blogService.update(blog.id, updateblog)
+      const updatedblog = {...blog, likes : blog.likes + 1, user: blog.user.id}
+      await blogService.update(blog.id, updatedblog)
       setBlogs(blogs.map(x=> x.id === blog.id ? {...x, likes: x.likes + 1 } : x))
+    }
+    catch(exception)
+    {
+      console.log(exception)
+    }
+  }
+  
+  const deleteBlog = async (blog) => {
+    try
+    {
+      if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)){
+        await blogService.deleteBlog(blog.id)
+        setBlogs(blogs.filter(x=> x.id !== blog.id))
+      }
     }
     catch(exception)
     {
