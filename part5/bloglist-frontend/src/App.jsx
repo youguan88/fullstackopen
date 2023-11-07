@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import Toggable from './components/Toggable'
+import Togglable from './components/Togglable'
 import CreateBlogForm from './components/createBlogForm'
 
 const Notification = ({ notification }) => {
@@ -57,15 +57,15 @@ const App = () => {
   const blogSection = () => (
     <div>
       {blogs
-      .sort((a,b)=> b.likes - a.likes)
-      .map(blog =>
-        <Blog 
-        key={blog.id} 
-        blog={blog} 
-        user={user}
-        handleLikes={()=>updateLikes(blog)}
-        handleDelete={()=>deleteBlog(blog)}/>
-      )}
+        .sort((a,b) => b.likes - a.likes)
+        .map(blog =>
+          <Blog
+            key={blog.id}
+            blog={blog}
+            user={user}
+            handleLikes={() => updateLikes(blog)}
+            handleDelete={() => deleteBlog(blog)}/>
+        )}
     </div>
   )
 
@@ -80,10 +80,10 @@ const App = () => {
       setUsername('')
       setPassword('')
       blogService.getAll().then(blogs => setBlogs(blogs))
-      setTempNotification({ message: "Login successful", isSuccess: true })
+      setTempNotification({ message: 'Login successful', isSuccess: true })
     } catch (exception) {
       console.log(exception)
-      setTempNotification({ message: "Wrong username or password", isSuccess: false })
+      setTempNotification({ message: 'Wrong username or password', isSuccess: false })
     }
   }
 
@@ -93,11 +93,11 @@ const App = () => {
       blogService.setToken(user.token)
       setUser(null)
       setBlogs([])
-      setTempNotification({ message: "Logout successful", isSuccess: true })
+      setTempNotification({ message: 'Logout successful', isSuccess: true })
     }
     catch (exception) {
       console.log(exception)
-      setTempNotification({ message: "Logout unsuccessful", isSuccess: false })
+      setTempNotification({ message: 'Logout unsuccessful', isSuccess: false })
     }
   }
 
@@ -114,29 +114,29 @@ const App = () => {
     }
     catch (exception) {
       console.log(exception)
-      setTempNotification({ message: "add new blog unsuccessful", isSuccess: false })
+      setTempNotification({ message: 'add new blog unsuccessful', isSuccess: false })
     }
   }
 
   const updateLikes = async (blog) => {
     try
     {
-      const updatedblog = {...blog, likes : blog.likes + 1, user: blog.user.id}
+      const updatedblog = { ...blog, likes : blog.likes + 1, user: blog.user.id }
       await blogService.update(blog.id, updatedblog)
-      setBlogs(blogs.map(x=> x.id === blog.id ? {...x, likes: x.likes + 1 } : x))
+      setBlogs(blogs.map(x => x.id === blog.id ? { ...x, likes: x.likes + 1 } : x))
     }
     catch(exception)
     {
       console.log(exception)
     }
   }
-  
+
   const deleteBlog = async (blog) => {
     try
     {
       if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)){
         await blogService.deleteBlog(blog.id)
-        setBlogs(blogs.filter(x=> x.id !== blog.id))
+        setBlogs(blogs.filter(x => x.id !== blog.id))
       }
     }
     catch(exception)
@@ -174,9 +174,9 @@ const App = () => {
 
   const createBlogFormRef = useRef()
   const createBlogForm = () => (
-    <Toggable buttonLabel="create new" ref={createBlogFormRef}>
+    <Togglable buttonLabel="create new" ref={createBlogFormRef}>
       <CreateBlogForm handleCreateBlog={handleCreateBlog} />
-    </Toggable>
+    </Togglable>
   )
 
   return (

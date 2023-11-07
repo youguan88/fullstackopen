@@ -20,7 +20,7 @@ const Blog = ({ blog, user, handleLikes, handleDelete }) => {
   const toggleVisibility = () => setView(!view)
   const removeButtonVisibility = { display: blog.user ? blog.user.id === user.id ? '' : 'none' : 'none' }
 
-  return (  
+  return (
     <div style={blogStyle}>
       <div>
         {blog.title} {blog.author}
