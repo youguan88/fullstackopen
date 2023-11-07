@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import Toggable from './components/Toggable'
+import CreateBlogForm from './components/createBlogForm'
 
 const Notification = ({ notification }) => {
   let messageColor = notification.isSuccess === true ? 'green' : 'red'
@@ -30,9 +32,6 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [notification, setNotification] = useState({ message: null, isSuccess: null })
 
   useEffect(() => {
@@ -48,10 +47,10 @@ const App = () => {
 
   }, [])
 
-  const setTempNotification = ({message, isSuccess}) => {
-    setNotification({message, isSuccess})
+  const setTempNotification = ({ message, isSuccess }) => {
+    setNotification({ message, isSuccess })
     setTimeout(() => {
-      setNotification({message: null, isSuccess: null})
+      setNotification({ message: null, isSuccess: null })
     }, 5000)
   }
 
@@ -74,10 +73,10 @@ const App = () => {
       setUsername('')
       setPassword('')
       blogService.getAll().then(blogs => setBlogs(blogs))
-      setTempNotification({message:"Login successful", isSuccess: true})
+      setTempNotification({ message: "Login successful", isSuccess: true })
     } catch (exception) {
       console.log(exception)
-      setTempNotification({message: "Wrong username or password", isSuccess: false})
+      setTempNotification({ message: "Wrong username or password", isSuccess: false })
     }
   }
 
@@ -87,32 +86,27 @@ const App = () => {
       blogService.setToken(user.token)
       setUser(null)
       setBlogs([])
-      setTempNotification({message:"Logout successful", isSuccess: true})
+      setTempNotification({ message: "Logout successful", isSuccess: true })
     }
     catch (exception) {
       console.log(exception)
-      setTempNotification({message:"Logout unsuccessful", isSuccess: false})
+      setTempNotification({ message: "Logout unsuccessful", isSuccess: false })
     }
   }
 
-  const handleCreateBlog = async (event) => {
-    event.preventDefault()
+  const handleCreateBlog = async (blog) => {
     try {
-      const blog = { title, author, url }
+      createBlogFormRef.current.toggleVisibility()
       const newblog = await blogService.create(blog)
-      console.log(newblog)
-      setTitle('')
-      setAuthor('')
-      setUrl('')
       setBlogs(blogs.concat(newblog))
       setTempNotification({
-        message:`a new blog ${newblog.title} by ${newblog.author} added`, 
+        message: `a new blog ${newblog.title} by ${newblog.author} added`,
         isSuccess: true
       })
     }
     catch (exception) {
       console.log(exception)
-      setTempNotification({message:"add new blog unsuccessful", isSuccess: false})
+      setTempNotification({ message: "add new blog unsuccessful", isSuccess: false })
     }
   }
 
@@ -143,16 +137,11 @@ const App = () => {
     </div>
   )
 
+  const createBlogFormRef = useRef()
   const createBlogForm = () => (
-    <div>
-      <h2>create new</h2>
-      <form onSubmit={handleCreateBlog}>
-        <div>title:<input type="text" value={title} name="title" onChange={({ target }) => setTitle(target.value)} /></div>
-        <div>author:<input type="text" value={author} name="author" onChange={({ target }) => setAuthor(target.value)} /></div>
-        <div>url:<input type="text" value={url} name="url" onChange={({ target }) => setUrl(target.value)} /></div>
-        <button type="submit">create</button>
-      </form>
-    </div>
+    <Toggable buttonLabel="create new" ref={createBlogFormRef}>
+      <CreateBlogForm handleCreateBlog={handleCreateBlog} />
+    </Toggable>
   )
 
   return (
@@ -160,14 +149,14 @@ const App = () => {
       {!user &&
         <div>
           <h2>Log in to application</h2>
-          <Notification notification={notification}/>
+          <Notification notification={notification} />
           {loginForm()}
         </div>
       }
       {user &&
         <div>
           <h2>blogs</h2>
-          <Notification notification={notification}/>
+          <Notification notification={notification} />
           <p>
             {user.name} logged in
             <button onClick={handleLogout}>logout</button>
