@@ -16,6 +16,7 @@ blogsRouter.post('/', async (request, response) => {
     else{
         const user = request.user
         blog.user = user.id
+        blog.likes = 0
         const savedBlog = await blog.save()
         user.blogs = user.blogs.concat(savedBlog._id)
         await user.save()
@@ -56,7 +57,8 @@ blogsRouter.put('/:id', async(request, response) => {
         title: body.title,
         author: body.author,
         url: body.url,
-        likes: body.likes
+        likes: body.likes,
+        user: body.user
     }
     if (!id){
         response.status(400).json({error:"id is not provided"})

@@ -57,7 +57,7 @@ const App = () => {
   const blogSection = () => (
     <div>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} handleLikes={()=>updateLikes(blog)}/>
       )}
     </div>
   )
@@ -108,6 +108,19 @@ const App = () => {
     catch (exception) {
       console.log(exception)
       setTempNotification({ message: "add new blog unsuccessful", isSuccess: false })
+    }
+  }
+
+  const updateLikes = async (blog) => {
+    try
+    {
+      const updateblog = {...blog, likes : blog.likes + 1, user: blog.user.id}
+      await blogService.update(blog.id, updateblog)
+      setBlogs(blogs.map(x=> x.id === blog.id ? {...x, likes: x.likes + 1 } : x))
+    }
+    catch(exception)
+    {
+      console.log(exception)
     }
   }
 
