@@ -2,7 +2,7 @@ import React, { useReducer } from 'react'
 import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import Blog from './Blog'
+import { Blog,ToggleButton } from './Blog'
 import App from '../App'
 
 const blog = {
@@ -51,4 +51,16 @@ test('shows content after clicking view button', async () => {
   await ue.click(button)
   const secondLevelDiv = container.querySelector('.secondLevel')
   expect(secondLevelDiv).not.toHaveStyle('display: none')
+})
+
+test('clicking the button twice calls event handler twice', async () => {
+  const mockHandler = jest.fn()
+  render(<ToggleButton
+    action={mockHandler}
+    label='view'/>)
+  const ue = userEvent.setup()
+  const button = screen.getByText('view')
+  await ue.click(button)
+  await ue.click(button)
+  expect(mockHandler.mock.calls).toHaveLength(2)
 })

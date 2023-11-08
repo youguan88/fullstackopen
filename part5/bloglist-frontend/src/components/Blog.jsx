@@ -1,5 +1,11 @@
 import { useState } from 'react'
 
+const ToggleButton = ({ action, label }) => {
+  return (
+    <button onClick={action}>{label}</button>
+  )
+}
+
 const Blog = ({ blog, user, handleLikes, handleDelete }) => {
   const [view, setView] = useState(false)
 
@@ -24,7 +30,7 @@ const Blog = ({ blog, user, handleLikes, handleDelete }) => {
     <div style={blogStyle}>
       <div className='firstLevel'>
         {blog.title} {blog.author}
-        <button onClick={toggleVisibility}>{buttonLabel}</button>
+        <ToggleButton action={toggleVisibility} label={buttonLabel} />
       </div>
       <div style={detailsStyle} className='secondLevel'>
         <div>{blog.url}</div>
@@ -38,4 +44,4 @@ const Blog = ({ blog, user, handleLikes, handleDelete }) => {
     </div>
   )
 }
-export default Blog
+export { Blog, ToggleButton }
