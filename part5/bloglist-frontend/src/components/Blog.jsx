@@ -22,11 +22,11 @@ const Blog = ({ blog, user, handleLikes, handleDelete }) => {
 
   return (
     <div style={blogStyle}>
-      <div>
+      <div className='firstLevel'>
         {blog.title} {blog.author}
         <button onClick={toggleVisibility}>{buttonLabel}</button>
       </div>
-      <div style={detailsStyle}>
+      <div style={detailsStyle} className='secondLevel'>
         <div>{blog.url}</div>
         <div>
           {blog.likes}
