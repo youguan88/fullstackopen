@@ -66,6 +66,12 @@ describe('Blog app', function () {
         cy.contains('Reach out for the stars').contains('view').click()
           .parent().parent().contains('like').click()
       })
+
+      it('User who created blog can delete it', function() {
+        cy.contains('Reach out for the stars').contains('view').click()
+          .parent().parent().contains('remove').click()
+        cy.should('not.contain', 'Reach out for the stars')
+      })
     })
   })
 
