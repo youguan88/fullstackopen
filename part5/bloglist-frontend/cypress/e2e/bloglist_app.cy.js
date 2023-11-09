@@ -50,6 +50,23 @@ describe('Blog app', function () {
       cy.get('#createblog-button').click()
       cy.contains('a new blog Reach out for the stars by Dan Grey added')
     })
+
+    describe('and a blog exists', function() {
+      beforeEach(function() {
+        const loggedInUser = window.localStorage.getItem('loggedInUser')
+        const blog = {
+          title: 'Reach out for the stars',
+          author: 'Dan Grey',
+          url: 'www.dangrey.com',
+          user: loggedInUser }
+        cy.createBlog(blog)
+      })
+
+      it('A blog can be liked', function() {
+        cy.contains('Reach out for the stars').contains('view').click()
+          .parent().parent().contains('like').click()
+      })
+    })
   })
 
 })
