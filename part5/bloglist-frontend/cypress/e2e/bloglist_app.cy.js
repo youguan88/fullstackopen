@@ -1,12 +1,16 @@
 describe('Blog app', function () {
   beforeEach(function () {
     cy.request('POST', 'http://localhost:3003/api/testing/reset')
-    const user = {
+    cy.request('POST', 'http://localhost:3003/api/users', {
       'username': 'emily',
       'name': 'emily watsons',
       'password': 'magic'
-    }
-    cy.request('POST', 'http://localhost:3003/api/users', user)
+    })
+    cy.request('POST', 'http://localhost:3003/api/users', {
+      'username': 'daniel',
+      'name': 'daniel robertson',
+      'password': 'magic'
+    })
     cy.visit('http://localhost:5173')
   })
 
@@ -33,13 +37,7 @@ describe('Blog app', function () {
 
   describe('When logged in', function() {
     beforeEach(function() {
-      cy.request('POST', 'http://localhost:3003/api/login', {
-        username:'emily',
-        password: 'magic'
-      }).then(response => {
-        localStorage.setItem('loggedInUser', JSON.stringify(response.body))
-        cy.visit('http://localhost:5173')
-      })
+      cy.login({ username:'emily', password:'magic' })
     })
 
     it('A blog can be created', function() {
@@ -70,8 +68,21 @@ describe('Blog app', function () {
       it('User who created blog can delete it', function() {
         cy.contains('Reach out for the stars').contains('view').click()
           .parent().parent().contains('remove').click()
-        cy.should('not.contain', 'Reach out for the stars')
+        cy.get('html').should('not.contain', 'Reach out for the stars')
       })
+
+      describe('And logout and logged in with another user', function() {
+        beforeEach(function() {
+          cy.contains('logout').click()
+          cy.login({ username:'daniel', password:'magic' })
+        })
+        it('Only user who created blog can delete it', function() {
+          cy.contains('Reach out for the stars').contains('view').click()
+          cy.contains('Reach out for the stars').parent().parent()
+            .get('remove').should('not.exist')
+        })
+      })
+
     })
   })
 
