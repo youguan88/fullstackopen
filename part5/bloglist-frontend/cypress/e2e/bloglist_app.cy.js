@@ -84,6 +84,35 @@ describe('Blog app', function () {
       })
 
     })
+
+    describe('and multiple blog exists', function() {
+      beforeEach(function() {
+        const loggedInUser = window.localStorage.getItem('loggedInUser')
+        cy.createBlog({
+          title: 'The title with the second most likes',
+          author: 'Dan Grey',
+          url: 'www.dangrey.com',
+          user: loggedInUser })
+        cy.createBlog({
+          title: 'The title with the most likes',
+          author: 'Reily Miran',
+          url: 'www.reilymiran.com',
+          user: loggedInUser })
+      })
+      it('blogs are ordered by likes with the blog with the most likes being first',
+        function() {
+          cy.contains('The title with the most likes').contains('view').click()
+          cy.contains('The title with the second most likes').contains('view').click()
+          cy.contains('The title with the most likes').parent()
+            .find('#like-button').as('LikeButton1')
+          cy.contains('The title with the second most likes').parent()
+            .find('#like-button').as('LikeButton2')
+          cy.get('@LikeButton1').click().click().click()
+          cy.get('@LikeButton2').click().click()
+          cy.get('.blog').eq(0).should('contain', 'The title with the most likes')
+          cy.get('.blog').eq(1).should('contain', 'The title with the second most likes')
+        })
+    })
   })
 
 })

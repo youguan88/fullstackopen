@@ -27,7 +27,7 @@ const Blog = ({ blog, user, handleLikes, handleDelete }) => {
   const removeButtonVisibility = { display: blog.user ? blog.user.id === user.id ? '' : 'none' : 'none' }
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className='blog'>
       <div className='firstLevel'>
         {blog.title} {blog.author}
         <ToggleButton action={toggleVisibility} label={buttonLabel} />
@@ -36,7 +36,7 @@ const Blog = ({ blog, user, handleLikes, handleDelete }) => {
         <div>{blog.url}</div>
         <div>
           {blog.likes}
-          <button onClick={handleLikes}>like</button>
+          <button onClick={handleLikes} id='like-button'>like</button>
         </div>
         <div>{user_name}</div>
         <button style={removeButtonVisibility} onClick={handleDelete}>remove</button>
