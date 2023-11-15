@@ -9,3 +9,7 @@ export const getAnecdotes = async () => {
 export const createAnecdote = async (newObj) => {
     return await axios.post(baseUrl, newObj).then(res => res.data)
 }
+
+export const updateAnecdote = async (newObj) => {
+    return await axios.put(`${baseUrl}/${newObj.id}`, newObj).then(res => res.data)
+}
