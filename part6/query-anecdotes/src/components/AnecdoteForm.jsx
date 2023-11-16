@@ -14,6 +14,10 @@ const AnecdoteForm = () => {
       queryClient.setQueryData(['anecdotes'], anecdotes.concat(newAnecdote))
       dispatch({ type: 'NOTIFY', payload: `Added ${newAnecdote.content}` })
       setTimeout(() => { dispatch({ type: 'REMOVE' }) }, 5000)
+    },
+    onError: (res) => {
+      dispatch({ type: 'NOTIFY', payload: res.response.data.error })
+      setTimeout(() => { dispatch({ type: 'REMOVE' }) }, 5000)
     }
   })
 
