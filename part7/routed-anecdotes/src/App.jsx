@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState } from 'react'
 import {
   Routes,
@@ -9,10 +10,16 @@ import {
   useMatch
 } from "react-router-dom"
 
-const Menu = ({anecdotes, addNew}) => {
+const Menu = ({ anecdotes, addNew }) => {
   const padding = {
     paddingRight: 5
   }
+
+  const match = useMatch('/anecdotes/:id')
+  const anecdote = match
+    ? anecdotes.find(anecdote => anecdote.id === Number(match.params.id))
+    : null
+
   return (
     <>
       <div>
@@ -24,8 +31,20 @@ const Menu = ({anecdotes, addNew}) => {
         <Route path="/create" element={<CreateNew addNew={addNew} />} />
         <Route path="/about" element={<About />} />
         <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
+        <Route path="/anecdotes/:id" element={<Anecdote anecdote={anecdote}/>}/>
       </Routes>
     </>
+  )
+}
+
+const Anecdote = ({anecdote}) => {
+  const style={paddingBottom: '1em'}
+  return (
+    <div>
+      <h2>{anecdote.content}</h2>
+      <div style={style}>has {anecdote.votes} votes</div>
+      <div style={style}>for more info see <a href={anecdote.info}>{anecdote.info}</a></div>
+    </div>
   )
 }
 
@@ -33,7 +52,9 @@ const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
     <ul>
-      {anecdotes.map(anecdote => <li key={anecdote.id} >{anecdote.content}</li>)}
+      {anecdotes.map(anecdote => <li key={anecdote.id} >
+        <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
+      </li>)}
     </ul>
   </div>
 )
@@ -141,7 +162,7 @@ const App = () => {
   return (
     <div>
       <h1>Software anecdotes</h1>
-      <Menu anecdotes={anecdotes} addNew={addNew}/>
+      <Menu anecdotes={anecdotes} addNew={addNew} />
       <Footer />
     </div>
   )
