@@ -10,7 +10,7 @@ import {
   useMatch,
   redirect
 } from "react-router-dom"
-import  { useField } from './hooks/index'
+import { useField } from './hooks/index'
 
 const Menu = ({ anecdotes, addNew, notification }) => {
   const padding = {
@@ -34,14 +34,14 @@ const Menu = ({ anecdotes, addNew, notification }) => {
         <Route path="/create" element={<CreateNew addNew={addNew} />} />
         <Route path="/about" element={<About />} />
         <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
-        <Route path="/anecdotes/:id" element={<Anecdote anecdote={anecdote}/>}/>
+        <Route path="/anecdotes/:id" element={<Anecdote anecdote={anecdote} />} />
       </Routes>
     </>
   )
 }
 
-const Anecdote = ({anecdote}) => {
-  const style={paddingBottom: '1em'}
+const Anecdote = ({ anecdote }) => {
+  const style = { paddingBottom: '1em' }
   return (
     <div>
       <h2>{anecdote.content}</h2>
@@ -85,9 +85,9 @@ const Footer = () => (
 )
 
 const CreateNew = (props) => {
-  const content = useField('content')
-  const author = useField('author')
-  const info = useField('info')
+  const { reset: resetContent, ...content } = useField('content')
+  const { reset: resetAuthor, ...author } = useField('author')
+  const { reset: resetInfo, ...info } = useField('info')
   const navigate = useNavigate()
 
   const handleSubmit = (e) => {
@@ -103,9 +103,9 @@ const CreateNew = (props) => {
 
   const handleReset = (e) => {
     e.preventDefault()
-    content.reset()
-    author.reset()
-    info.reset()
+    resetContent()
+    resetAuthor()
+    resetInfo()
   }
 
   return (
