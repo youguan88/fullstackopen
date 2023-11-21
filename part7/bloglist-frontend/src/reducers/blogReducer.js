@@ -34,8 +34,8 @@ export const initializeBlogs = () => {
 export const createBlog = (blog, user) => {
     return async dispatch => {
         const newBlog = await blogService.create(blog)
-        user.token = null
-        newBlog.user = user
+        const redactedUser = {...user, token : null}
+        newBlog.user = redactedUser
         dispatch(appendBlog(newBlog))
     }
 }

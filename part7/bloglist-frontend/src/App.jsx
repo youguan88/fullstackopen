@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setNewNotification, resetNotification } from './reducers/notificationReducer'
 import { setNotificationStatus } from './reducers/notificationSuccessReducer'
 import { initializeBlogs, createBlog, updateBlog, removeBlog } from './reducers/blogReducer'
+import { initializeLogin, initializeLogout, loginAction } from './reducers/loginReducer'
 
 const Notification = () => {
   let message = useSelector(state => { return state.notification })
@@ -33,8 +34,6 @@ const Notification = () => {
 }
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
-  const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const dispatch = useDispatch()
@@ -43,12 +42,12 @@ const App = () => {
     const loggedInUser = window.localStorage.getItem('loggedInUser')
     if (loggedInUser) {
       const user = JSON.parse(loggedInUser)
-      setUser(user)
-      blogService.setToken(user.token)
+      dispatch(initializeLogin(user))
       dispatch(initializeBlogs())
     }
   }, [dispatch])
 
+  const user = useSelector(state => state.loginInfo)
   const bloglist = useSelector(state => state.blogs)
 
   const setTempNotification = ({ message, isSuccess }) => {
@@ -82,10 +81,7 @@ const App = () => {
     event.preventDefault()
 
     try {
-      const user = await loginService.login({ username, password })
-      window.localStorage.setItem('loggedInUser', JSON.stringify(user))
-      blogService.setToken(user.token)
-      setUser(user)
+      dispatch(loginAction(username, password))
       setUsername('')
       setPassword('')
       setTempNotification({
@@ -103,10 +99,7 @@ const App = () => {
 
   const handleLogout = async () => {
     try {
-      window.localStorage.clear()
-      blogService.setToken(user.token)
-      setUser(null)
-      setBlogs([])
+      dispatch(initializeLogout())
       setTempNotification({
         message: 'Logout successful',
         isSuccess: true
