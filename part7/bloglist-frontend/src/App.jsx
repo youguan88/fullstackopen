@@ -7,10 +7,11 @@ import CreateBlogForm from './components/createBlogForm'
 import { useDispatch, useSelector } from 'react-redux'
 import { setNewNotification, resetNotification } from './reducers/notificationReducer'
 import { setNotificationStatus } from './reducers/notificationSuccessReducer'
+import { initializeBlogs, createBlog, updateBlog, removeBlog } from './reducers/blogReducer'
 
 const Notification = () => {
-  let message = useSelector(state => {return state.notification})
-  let messageColor = useSelector(state => {return state.notificationSuccess}) === true ? 'green' : 'red'
+  let message = useSelector(state => { return state.notification })
+  let messageColor = useSelector(state => { return state.notificationSuccess }) === true ? 'green' : 'red'
   const notificationStyle = {
     color: messageColor,
     background: 'lightgrey',
@@ -36,10 +37,6 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [notification, setNotification] = useState({
-    message: null,
-    isSuccess: null
-  })
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -48,34 +45,38 @@ const App = () => {
       const user = JSON.parse(loggedInUser)
       setUser(user)
       blogService.setToken(user.token)
-      blogService.getAll().then((blogs) => setBlogs(blogs))
+      dispatch(initializeBlogs())
     }
-  }, [])
+  }, [dispatch])
+
+  const bloglist = useSelector(state => state.blogs)
 
   const setTempNotification = ({ message, isSuccess }) => {
     dispatch(setNewNotification(message))
     dispatch(setNotificationStatus(isSuccess))
-    setTimeout(()=> {
+    setTimeout(() => {
       dispatch(resetNotification())
       dispatch(setNotificationStatus(null))
     }, 5000)
   }
 
-  const blogSection = () => (
-    <div>
-      {blogs
-        .sort((a, b) => b.likes - a.likes)
-        .map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            user={user}
-            handleLikes={() => updateLikes(blog)}
-            handleDelete={() => deleteBlog(blog)}
-          />
-        ))}
-    </div>
-  )
+  const blogSection = () => {
+    return (
+      <div>
+        {[...bloglist]
+          .sort((a, b) => b.likes - a.likes)
+          .map((blog) => (
+            <Blog
+              key={blog.id}
+              blog={blog}
+              user={user}
+              handleLikes={() => updateLikes(blog)}
+              handleDelete={() => deleteBlog(blog)}
+            />
+          ))}
+      </div>
+    )
+  }
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -87,7 +88,6 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-      blogService.getAll().then((blogs) => setBlogs(blogs))
       setTempNotification({
         message: 'Login successful',
         isSuccess: true
@@ -123,11 +123,9 @@ const App = () => {
   const handleCreateBlog = async (blog) => {
     try {
       createBlogFormRef.current.toggleVisibility()
-      const newblog = await blogService.create(blog)
-      newblog.user = user
-      setBlogs(blogs.concat(newblog))
+      dispatch(createBlog(blog, user))
       setTempNotification({
-        message: `a new blog ${newblog.title} by ${newblog.author} added`,
+        message: `a new blog ${blog.title} by ${blog.author} added`,
         isSuccess: true
       })
     } catch (exception) {
@@ -141,15 +139,7 @@ const App = () => {
 
   const updateLikes = async (blog) => {
     try {
-      const updatedblog = {
-        ...blog,
-        likes: blog.likes + 1,
-        user: blog.user.id
-      }
-      await blogService.update(blog.id, updatedblog)
-      setBlogs(
-        blogs.map((x) => (x.id === blog.id ? { ...x, likes: x.likes + 1 } : x))
-      )
+      dispatch(updateBlog(blog))
     } catch (exception) {
       console.log(exception)
     }
@@ -158,8 +148,7 @@ const App = () => {
   const deleteBlog = async (blog) => {
     try {
       if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-        await blogService.deleteBlog(blog.id)
-        setBlogs(blogs.filter((x) => x.id !== blog.id))
+        dispatch(removeBlog(blog))
       }
     } catch (exception) {
       console.log(exception)
@@ -208,14 +197,14 @@ const App = () => {
       {!user && (
         <div>
           <h2>Log in to application</h2>
-          <Notification notification={notification} />
+          <Notification />
           {loginForm()}
         </div>
       )}
       {user && (
         <div>
           <h2>blogs</h2>
-          <Notification notification={notification} />
+          <Notification />
           <p>
             {user.name} logged in
             <button onClick={handleLogout}>logout</button>
