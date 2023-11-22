@@ -16,6 +16,7 @@ blogsRouter.post("/", async (request, response) => {
     const user = request.user;
     blog.user = user.id;
     blog.likes = 0;
+    blog.comments = [];
     const savedBlog = await blog.save();
     user.blogs = user.blogs.concat(savedBlog._id);
     await user.save();
@@ -57,6 +58,19 @@ blogsRouter.put("/:id", async (request, response) => {
     response.status(400).json({ error: "id is not provided" });
   } else {
     await Blog.findByIdAndUpdate(id, blog, { new: true });
+    response.send(204).end();
+  }
+});
+
+blogsRouter.put("/:id/comments", async (request, response) => {
+  const id = request.params.id
+  const body = request.body
+  console.log(id)
+  console.log(body)
+  if (!id) {
+    response.status(400).json({ error: "id is not provided" });
+  } else {
+    await Blog.findByIdAndUpdate(id, {comments: body.comments}, { new: true });
     response.send(204).end();
   }
 });

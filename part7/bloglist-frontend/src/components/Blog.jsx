@@ -42,6 +42,19 @@ const BlogDetail = ({ blog, user, handleLikes, handleDelete }) => {
       <button style={removeButtonVisibility} onClick={() => handleDelete(blog)}>
           remove
       </button>
+
+      {blog.comments.length > 0 &&
+        <div>
+          <h3>comments</h3>
+          <ul>
+            {blog.comments.map(comment => (
+              <li key={comment}>
+                {comment}
+              </li>
+            ))}
+          </ul>
+        </div>
+      }
     </>
 
   )
