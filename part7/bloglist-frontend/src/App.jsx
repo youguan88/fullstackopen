@@ -9,8 +9,9 @@ import { setNewNotification, resetNotification } from './reducers/notificationRe
 import { setNotificationStatus } from './reducers/notificationSuccessReducer'
 import { initializeBlogs, createBlog, updateBlog, removeBlog } from './reducers/blogReducer'
 import { initializeLogin, initializeLogout, loginAction } from './reducers/loginReducer'
-import User from './components/User'
+import User, {UserDetail} from './components/User'
 import { initializeUsers } from './reducers/userReducer'
+import { Routes, Route, Link, useMatch } from 'react-router-dom'
 
 const Notification = () => {
   let message = useSelector(state => { return state.notification })
@@ -188,6 +189,12 @@ const App = () => {
     </Togglable>
   )
 
+  const userMatch = useMatch('/users/:id')
+  const users = useSelector(state=>state.users)
+  const userMatched = userMatch 
+  ? users.find(user=> user.id === userMatch.params.id)
+  : null
+
   return (
     <div>
       {!user && (
@@ -199,15 +206,21 @@ const App = () => {
       )}
       {user && (
         <div>
-          <User />
-          <h2>blogs</h2>
-          <Notification />
-          <p>
-            {user.name} logged in
+            <h2>blogs</h2>
+            <Notification />
+            <p>
+              {user.name} logged in
+            </p>
             <button onClick={handleLogout}>logout</button>
-          </p>
-          {createBlogForm()}
-          {blogSection()}
+            <Routes>
+              <Route path="/users" element={<User />} />
+              <Route path="/users/:id" element={<UserDetail user={userMatched}/>} />
+              <Route path="/" element={
+                <>
+                  {createBlogForm()}
+                  {blogSection()}
+                </>} />
+            </Routes>
         </div>
       )}
 
