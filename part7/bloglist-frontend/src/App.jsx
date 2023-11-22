@@ -1,7 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Blog } from './components/Blog'
-import blogService from './services/blogs'
-import loginService from './services/login'
+import { Blog, BlogDetail } from './components/Blog'
 import Togglable from './components/Togglable'
 import CreateBlogForm from './components/createBlogForm'
 import { useDispatch, useSelector } from 'react-redux'
@@ -9,7 +7,7 @@ import { setNewNotification, resetNotification } from './reducers/notificationRe
 import { setNotificationStatus } from './reducers/notificationSuccessReducer'
 import { initializeBlogs, createBlog, updateBlog, removeBlog } from './reducers/blogReducer'
 import { initializeLogin, initializeLogout, loginAction } from './reducers/loginReducer'
-import User, {UserDetail} from './components/User'
+import User, { UserDetail } from './components/User'
 import { initializeUsers } from './reducers/userReducer'
 import { Routes, Route, Link, useMatch } from 'react-router-dom'
 
@@ -53,6 +51,15 @@ const App = () => {
 
   const user = useSelector(state => state.loginInfo)
   const bloglist = useSelector(state => state.blogs)
+  const users = useSelector(state => state.users)
+
+  const userMatch = useMatch('/users/:id')
+  const userMatched = userMatch
+    ? users.find(user => user.id === userMatch.params.id) : null
+
+  const blogMatch = useMatch('/blogs/:id')
+  const blogMatched = blogMatch
+    ? bloglist.find(blog => blog.id === blogMatch.params.id) : null
 
   const setTempNotification = ({ message, isSuccess }) => {
     dispatch(setNewNotification(message))
@@ -72,9 +79,6 @@ const App = () => {
             <Blog
               key={blog.id}
               blog={blog}
-              user={user}
-              handleLikes={() => updateLikes(blog)}
-              handleDelete={() => deleteBlog(blog)}
             />
           ))}
       </div>
@@ -189,11 +193,6 @@ const App = () => {
     </Togglable>
   )
 
-  const userMatch = useMatch('/users/:id')
-  const users = useSelector(state=>state.users)
-  const userMatched = userMatch 
-  ? users.find(user=> user.id === userMatch.params.id)
-  : null
 
   return (
     <div>
@@ -206,21 +205,26 @@ const App = () => {
       )}
       {user && (
         <div>
-            <h2>blogs</h2>
-            <Notification />
-            <p>
-              {user.name} logged in
-            </p>
-            <button onClick={handleLogout}>logout</button>
-            <Routes>
-              <Route path="/users" element={<User />} />
-              <Route path="/users/:id" element={<UserDetail user={userMatched}/>} />
-              <Route path="/" element={
-                <>
-                  {createBlogForm()}
-                  {blogSection()}
-                </>} />
-            </Routes>
+          <h2>blogs</h2>
+          <Notification />
+          <p>
+            {user.name} logged in
+          </p>
+          <button onClick={handleLogout}>logout</button>
+          <Routes>
+            <Route path="/users" element={<User />} />
+            <Route path="/users/:id" element={<UserDetail user={userMatched} />} />
+            <Route path="/blogs/:id" element={<BlogDetail
+              blog={blogMatched}
+              user={user}
+              handleLikes={updateLikes}
+              handleDelete={deleteBlog} />} />
+            <Route path="/" element={
+              <>
+                {createBlogForm()}
+                {blogSection()}
+              </>} />
+          </Routes>
         </div>
       )}
 

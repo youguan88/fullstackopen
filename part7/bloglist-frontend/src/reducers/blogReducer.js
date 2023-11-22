@@ -41,6 +41,7 @@ export const createBlog = (blog, user) => {
 }
 
 export const updateBlog = (blog) => {
+    console.log(blog)
     return async dispatch => {
         const updatedblog = {
             ...blog,

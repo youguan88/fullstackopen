@@ -1,12 +1,8 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
-const ToggleButton = ({ action, label }) => {
-  return <button onClick={action}>{label}</button>
-}
 
-const Blog = ({ blog, user, handleLikes, handleDelete }) => {
-  const [view, setView] = useState(false)
-
+const Blog = ({ blog }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -15,37 +11,40 @@ const Blog = ({ blog, user, handleLikes, handleDelete }) => {
     marginBottom: 5
   }
 
-  const detailsStyle = {
-    display: view ? '' : 'none'
-  }
-
-  const buttonLabel = view ? 'hide' : 'view'
-  const user_name = blog.user ? blog.user.name : null
-  const toggleVisibility = () => setView(!view)
-  const removeButtonVisibility = {
-    display: blog.user ? (blog.user.id === user.id ? '' : 'none') : 'none'
-  }
-
   return (
     <div style={blogStyle} className="blog">
       <div className="firstLevel">
-        {blog.title} {blog.author}
-        <ToggleButton action={toggleVisibility} label={buttonLabel} />
-      </div>
-      <div style={detailsStyle} className="secondLevel">
-        <div>{blog.url}</div>
-        <div>
-          {blog.likes}
-          <button onClick={handleLikes} id="like-button">
-            like
-          </button>
-        </div>
-        <div>{user_name}</div>
-        <button style={removeButtonVisibility} onClick={handleDelete}>
-          remove
-        </button>
+        <Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link>
       </div>
     </div>
   )
 }
-export { Blog, ToggleButton }
+
+const BlogDetail = ({ blog, user, handleLikes, handleDelete }) => {
+  if (!blog) {
+    return null
+  }
+  const user_name = blog.user ? blog.user.name : null
+  const removeButtonVisibility = {
+    display: blog.user ? (blog.user.id === user.id ? '' : 'none') : 'none'
+  }
+  return (
+    <>
+      <h2>{blog.title}</h2>
+      <div>{blog.url}</div>
+      <div>
+        {blog.likes}
+        <button onClick={() => handleLikes(blog)} id="like-button">
+          like
+        </button>
+      </div>
+      <div>added by {user_name}</div>
+      <button style={removeButtonVisibility} onClick={() => handleDelete(blog)}>
+          remove
+      </button>
+    </>
+
+  )
+}
+
+export { Blog, BlogDetail }
