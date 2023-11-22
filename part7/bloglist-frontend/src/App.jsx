@@ -9,6 +9,8 @@ import { setNewNotification, resetNotification } from './reducers/notificationRe
 import { setNotificationStatus } from './reducers/notificationSuccessReducer'
 import { initializeBlogs, createBlog, updateBlog, removeBlog } from './reducers/blogReducer'
 import { initializeLogin, initializeLogout, loginAction } from './reducers/loginReducer'
+import User from './components/User'
+import { initializeUsers } from './reducers/userReducer'
 
 const Notification = () => {
   let message = useSelector(state => { return state.notification })
@@ -44,6 +46,7 @@ const App = () => {
       const user = JSON.parse(loggedInUser)
       dispatch(initializeLogin(user))
       dispatch(initializeBlogs())
+      dispatch(initializeUsers())
     }
   }, [dispatch])
 
@@ -196,6 +199,7 @@ const App = () => {
       )}
       {user && (
         <div>
+          <User />
           <h2>blogs</h2>
           <Notification />
           <p>
@@ -206,7 +210,9 @@ const App = () => {
           {blogSection()}
         </div>
       )}
+
     </div>
+
   )
 }
 

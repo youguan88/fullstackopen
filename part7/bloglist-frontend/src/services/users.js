@@ -1,9 +1,14 @@
 import axios from 'axios'
 const baseUrl = '/api/users'
 
-const getUser = (userId) => {
-  const request = axios.get(baseUrl)
-  return request.then((response) => response.data)
+const getAll = async () => {
+  const response = await axios.get(baseUrl)
+  return response.data
 }
 
-export default { getUser }
+const getUser = async (userID) => {
+  const response = await axios.get(`${baseUrl}/${userID}`)
+  return response.data
+}
+
+export default { getAll, getUser }
