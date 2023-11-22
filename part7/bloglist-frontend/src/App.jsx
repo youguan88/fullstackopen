@@ -193,6 +193,8 @@ const App = () => {
     </Togglable>
   )
 
+  const padding = { paddingRight: '5px' }
+  const backgroundColor = { background: 'pink' }
 
   return (
     <div>
@@ -205,12 +207,14 @@ const App = () => {
       )}
       {user && (
         <div>
-          <h2>blogs</h2>
+          <div style={backgroundColor}>
+            <Link style={padding} to="/">blogs</Link>
+            <Link style={padding} to="/users">users</Link>
+            <span style={padding}>{user.name} logged in</span>
+            <button onClick={handleLogout}>logout</button>
+          </div>
+          <h2>blog app</h2>
           <Notification />
-          <p>
-            {user.name} logged in
-          </p>
-          <button onClick={handleLogout}>logout</button>
           <Routes>
             <Route path="/users" element={<User />} />
             <Route path="/users/:id" element={<UserDetail user={userMatched} />} />
