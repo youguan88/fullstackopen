@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-
+import { useDispatch } from 'react-redux'
+import { addCommentToBlog } from '../reducers/blogReducer'
 
 const Blog = ({ blog }) => {
   const blogStyle = {
@@ -21,12 +22,20 @@ const Blog = ({ blog }) => {
 }
 
 const BlogDetail = ({ blog, user, handleLikes, handleDelete }) => {
+  const [comment, setComment] = useState('')
+  const dispatch = useDispatch()
   if (!blog) {
     return null
   }
   const user_name = blog.user ? blog.user.name : null
   const removeButtonVisibility = {
     display: blog.user ? (blog.user.id === user.id ? '' : 'none') : 'none'
+  }
+  const addComment = (event) => {
+    event.preventDefault()
+    const newCommentList = blog.comments.concat(comment)
+    dispatch(addCommentToBlog(blog, newCommentList))
+    setComment('')
   }
   return (
     <>
@@ -40,12 +49,16 @@ const BlogDetail = ({ blog, user, handleLikes, handleDelete }) => {
       </div>
       <div>added by {user_name}</div>
       <button style={removeButtonVisibility} onClick={() => handleDelete(blog)}>
-          remove
+        remove
       </button>
 
-      {blog.comments.length > 0 &&
-        <div>
-          <h3>comments</h3>
+      <div>
+        <h3>comments</h3>
+        <form onSubmit={addComment}>
+          <input value={comment} onChange={({ target }) => setComment(target.value)} />
+          <button type='submit'>add comment</button>
+        </form>
+        {blog.comments.length > 0 &&
           <ul>
             {blog.comments.map(comment => (
               <li key={comment}>
@@ -53,10 +66,9 @@ const BlogDetail = ({ blog, user, handleLikes, handleDelete }) => {
               </li>
             ))}
           </ul>
-        </div>
-      }
+        }
+      </div>
     </>
-
   )
 }
 
