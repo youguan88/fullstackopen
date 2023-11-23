@@ -10,6 +10,11 @@ import { initializeLogin, initializeLogout, loginAction } from './reducers/login
 import User, { UserDetail } from './components/User'
 import { initializeUsers } from './reducers/userReducer'
 import { Routes, Route, Link, useMatch } from 'react-router-dom'
+import './style/style.css'
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
+import Button from 'react-bootstrap/esm/Button'
+import Container from 'react-bootstrap/Container';
 
 const Notification = () => {
   let message = useSelector(state => { return state.notification })
@@ -197,7 +202,7 @@ const App = () => {
   const backgroundColor = { background: 'pink' }
 
   return (
-    <div>
+    <div className='body'>
       {!user && (
         <div>
           <h2>Log in to application</h2>
@@ -207,12 +212,22 @@ const App = () => {
       )}
       {user && (
         <div>
-          <div style={backgroundColor}>
-            <Link style={padding} to="/">blogs</Link>
-            <Link style={padding} to="/users">users</Link>
-            <span style={padding}>{user.name} logged in</span>
-            <button onClick={handleLogout}>logout</button>
-          </div>
+          <Navbar style={backgroundColor}>
+            <Container>
+              <Nav className="me-auto">
+                <Nav.Link style={padding} href="/">Blogs</Nav.Link>
+                <Nav.Link style={padding} href="/users">Users</Nav.Link>
+              </Nav>
+              <Nav>
+                <Navbar.Collapse className="justify-content-end">
+                  <Navbar.Text>
+                    {user.name} logged in
+                  </Navbar.Text>
+                  <Button size="sm" variant='secondary' onClick={handleLogout}>logout</Button>
+                </Navbar.Collapse>
+              </Nav>
+            </Container>
+          </Navbar>
           <h2>blog app</h2>
           <Notification />
           <Routes>

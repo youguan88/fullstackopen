@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { addCommentToBlog } from '../reducers/blogReducer'
+import Button from 'react-bootstrap/Button';
 
 const Blog = ({ blog }) => {
   const blogStyle = {
@@ -37,26 +38,27 @@ const BlogDetail = ({ blog, user, handleLikes, handleDelete }) => {
     dispatch(addCommentToBlog(blog, newCommentList))
     setComment('')
   }
+  const blogURL = blog.url.includes('http') ? blog.url : 'http://' + blog.url
   return (
     <>
       <h2>{blog.title}</h2>
-      <div>{blog.url}</div>
+      <div><a href={blogURL}>{blog.url}</a></div>
       <div>
         {blog.likes}
-        <button onClick={() => handleLikes(blog)} id="like-button">
+        <Button variant="primary" size='sm' onClick={() => handleLikes(blog)} id="like-button">
           like
-        </button>
+        </Button>
       </div>
       <div>added by {user_name}</div>
-      <button style={removeButtonVisibility} onClick={() => handleDelete(blog)}>
+      <Button variant="primary" size='sm' style={removeButtonVisibility} onClick={() => handleDelete(blog)}>
         remove
-      </button>
+      </Button>
 
       <div>
         <h3>comments</h3>
         <form onSubmit={addComment}>
           <input value={comment} onChange={({ target }) => setComment(target.value)} />
-          <button type='submit'>add comment</button>
+          <Button variant="primary" size='sm' type='submit'>add comment</Button>
         </form>
         {blog.comments.length > 0 &&
           <ul>
