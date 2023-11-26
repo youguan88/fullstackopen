@@ -1,5 +1,31 @@
-import { useQuery } from "@apollo/client"
-import { All_Authors } from "../queries"
+import { useMutation, useQuery } from "@apollo/client"
+import { All_Authors, editAuthor } from "../queries"
+import { useState } from "react"
+
+const SetBirthYearForm = () => {
+  const [name, setName] = useState('')
+  const [born, setBorn] = useState('')
+  const [updateBirthYear] = useMutation(editAuthor, {
+    refetchQueries: [{query: All_Authors}]
+  })
+  const handleUpdateAuthor = (event) => {
+    event.preventDefault()
+    updateBirthYear({variables: {name: name, setBornTo: Number(born)}})
+    setName('')
+    setBorn('')
+  }
+
+  return (
+    <div>
+      <h2>Set birthyear</h2>
+      <form onSubmit={handleUpdateAuthor}>
+        <div>name <input value={name} onChange={({ target }) => setName(target.value)} /></div>
+        <div>born <input value={born} onChange={({ target }) => setBorn(target.value)} /></div>
+        <div><button type="submit">update author</button></div>
+      </form>
+    </div>
+  )
+}
 
 const Authors = (props) => {
   const result = useQuery(All_Authors)
@@ -28,6 +54,7 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
+      <SetBirthYearForm />
     </div>
   )
 }
