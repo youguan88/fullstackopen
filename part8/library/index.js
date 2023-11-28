@@ -179,15 +179,17 @@ const resolvers = {
             return newUser
         },
         login: async (root, args) => {
+            
             const user = await User.findOne({ username: args.username })
             //ignore validation of password as per instructions
-            if (!user && args.password === "secret") {
+            if (!user || args.password !== "secret") {
                 throw new GraphQLError('Username / Password is incorrect', {
                     extensions: {
                         code: 'BAD_USER_INPUT',
                     }
                 })
             }
+
             const userForToken = {
                 username: user.username,
                 id: user._id
