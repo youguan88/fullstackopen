@@ -5,6 +5,7 @@ const mongoose = require('mongoose')
 const Author = require('./models/author')
 const Book = require('./models/book')
 const author = require('./models/author')
+const { GraphQLError } = require('graphql')
 require('dotenv').config()
 const MONGODB_URI = process.env.MONGODB_URI
 console.log('connecting to', MONGODB_URI)
@@ -70,11 +71,29 @@ const resolvers = {
             let authorExists = await Author.findOne({name: args.author})
             if (!authorExists) {
                 const newAuthor = new Author({name: args.author})
-                await newAuthor.save()
+                try {
+                    await newAuthor.save()
+                } catch (error) {
+                    throw new GraphQLError('Error adding new author', {
+                        extensions: {
+                            code: 'BAD_USER_INPUT',
+                            invalidArgs: args.author, error
+                        }
+                    })
+                }
                 authorExists = await Author.findOne({name: args.author})
             }
             const book = new Book({...args, author: {...authorExists}})
-            await book.save()
+            try {
+                await book.save()
+            } catch (error) {
+                throw new GraphQLError('Error adding new book', {
+                    extensions: {
+                        code: 'BAD_USER_INPUT',
+                        invalidArgs: error
+                    }
+                })
+            }
             return await Book.findById(book.id).populate('author')
         },
         editAuthor: async (root, args) => {
@@ -83,7 +102,16 @@ const resolvers = {
                 return null
             }
             authorExists.born = args.setBornTo
-            await authorExists.save()
+            try {
+                await authorExists.save()
+            } catch (error) {
+                throw new GraphQLError(`Error editing author ${args.name}`, {
+                    extensions: {
+                        code: 'BAD_USER_INPUT',
+                        invalidArgs: args.setBornTo, error
+                    }
+                })
+            }
             return await Author.findById(authorExists.id)
         }
     }
