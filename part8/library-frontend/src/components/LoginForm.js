@@ -18,15 +18,13 @@ const LoginForm = ({show, setToken, setPage}) => {
             setToken(token)
             localStorage.setItem('library-user-token', token)
         }
-    }, [result.data])
+    }, [result.data, setToken])
 
     if (!show){
         return null
     }
 
     const handleLogin = (event) => {
-        console.log(username)
-        console.log(password)
         event.preventDefault()
         login({variables: {username, password}})
         setUsername('')

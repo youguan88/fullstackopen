@@ -10,7 +10,6 @@ const SetBirthYearForm = ({ authors }) => {
     refetchQueries: [{ query: All_Authors }]
   })
   const handleUpdateAuthor = (event) => {
-    console.log(name)
     event.preventDefault()
     updateBirthYear({ variables: { name: name, setBornTo: Number(born) } })
     setName(initialName)
