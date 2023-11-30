@@ -10,14 +10,21 @@ const pubsub = new PubSub()
 const resolvers = {
     Query: {
         bookCount: async () => Book.collection.countDocuments(),
-        authorCount: () => author.collection.countDocuments(),
+        authorCount: () => Author.collection.countDocuments(),
         allBooks: async (root, args) => {
             if (args.genre) {
                 return await Book.find({ genres: args.genre }).populate('author')
             }
             return await Book.find({}).populate('author')
         },
-        allAuthors: async () => await Author.find({}),
+        allAuthors: async () => {
+            const authors = await Author.find({})
+            const books = await Book.find({}).populate('author')
+            return [...authors].map(author => {
+                author.bookCount = books.filter(book => book.author.id === author.id).length
+                return author
+            })
+        },
         me: (root, args, context) => {
             return context.currentUser
         }
