@@ -8,7 +8,7 @@ interface Result {
     average: number
 }
 
-const ratingLegend = {
+const ratingLegend: any = {
     1: "Below expectation",
     2: "Met expectation",
     3: "Exceeded expectation"
@@ -20,22 +20,20 @@ const calculateExercises = (dailyHours: number[], targetHours: number): Result =
     const target = targetHours
     const average = dailyHours.reduce((acc, cur) => { return acc + cur }, 0) / dailyHours.length
     const success = average < target ? false : true
-    let rating, ratingDescription
+    let rating
     const targetRatio = average / target
     if (targetRatio >= 1)
     {
         rating = 3
-        ratingDescription = ratingLegend[3]
     }
     else if (targetRatio >= 0.8 && targetRatio < 1)
     {
         rating = 2
-        ratingDescription = ratingLegend[2]
     }
     else{
         rating = 1
-        ratingDescription = ratingLegend[1]
     }
+    const ratingDescription = ratingLegend[rating]
     return {periodLength, trainingDays, success, rating, ratingDescription, target, average}
 }
 
