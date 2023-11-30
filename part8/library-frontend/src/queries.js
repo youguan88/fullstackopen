@@ -71,3 +71,20 @@ query Me {
   }
 }
 `
+
+export const BOOKADDED = gql`
+subscription Subscription {
+  bookAdded {
+    title
+    published
+    author {
+      name
+      born
+      bookCount
+      id
+    }
+    genres
+    id
+  }
+}
+`
