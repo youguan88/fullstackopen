@@ -14,7 +14,7 @@ const ratingLegend = {
     3: "Exceeded expectation"
 }
 
-const calculateExercises = (dailyHours: number[], targetHours: number) => {
+const calculateExercises = (dailyHours: number[], targetHours: number): Result => {
     const periodLength = dailyHours.length
     const trainingDays = dailyHours.filter(hour => hour > 0).length
     const target = targetHours
