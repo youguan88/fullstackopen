@@ -5,7 +5,22 @@ import NewBook from './components/NewBook'
 import LoginForm from './components/LoginForm'
 import Recommend from './components/Recommend'
 import { useApolloClient, useSubscription } from '@apollo/client'
-import { BOOKADDED } from './queries'
+import { All_Books, BOOKADDED } from './queries'
+
+const updateCache = (cache, query, addedBook) => {
+  const uniquebooks = (books) => {
+    let seen = new Set()
+    return books.filter((book) => {
+      let bookTitle = book.title
+      return seen.has(bookTitle) ? false : seen.add(bookTitle)
+    })
+  }
+  cache.updateQuery(query, ({allBooks}) => {
+    return {
+      allBooks: uniquebooks(allBooks.concat(addedBook))
+    }
+  })
+}
 
 const App = () => {
   const [page, setPage] = useState('authors')
@@ -21,7 +36,7 @@ const App = () => {
   useSubscription(BOOKADDED, {
     onData: ({data, client}) => {
       const addedBook =  data.data.bookAdded
-      window.alert(JSON.stringify(addedBook))
+      updateCache(client.cache, {query: All_Books}, addedBook)
     }
   })
 
