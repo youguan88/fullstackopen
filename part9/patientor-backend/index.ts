@@ -1,14 +1,20 @@
-import express from 'express';
+const express = require('express');
+const cors = require('cors')
+
 const app = express();
-app.use(express.json());
+app.use(
+    cors(),
+    express.json()
+);
+require('dotenv').config()
 
-const PORT = 3000;
+const PORT = 3001;
 
-app.get('/ping', (_req, res) => {
+app.get('/api/ping', (_req: any, res: { send: (arg0: string) => void; }) => {
     console.log("Someone pinged here");
     res.send('pong');
 });
 
-app.listen(PORT, ()=> {
+app.listen(PORT, () => {
     console.log(`Server running on PORT ${PORT}`);
 });
