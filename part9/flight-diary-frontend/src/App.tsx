@@ -4,6 +4,7 @@ import { ContentProps, DiaryEntry } from './types'
 
 const App = () => {
   const [diaries, setDiaries] = useState<DiaryEntry[]>([])
+  const [notification, setNotification] = useState(null)
   useEffect(() => {
     diaryService.getAll().then((data) => {
       setDiaries(data)
@@ -32,18 +33,37 @@ const App = () => {
     const [comment, setComment] = useState('')
     const handleAddDiary = async (event: SyntheticEvent) => {
       event.preventDefault()
-      const result = await diaryService.create({
+      const { data, err } = await diaryService.create({
         date, visibility, weather, comment, id: Math.max(...diaries.map(diary => diary.id)) + 1
       })
-      setDiaries(diaries.concat(result))
-      setDate('')
-      setVisiblity('')
-      setWeather('')
-      setComment('')
+      if (data) {
+        setDiaries(diaries.concat(data))
+        setDate('')
+        setVisiblity('')
+        setWeather('')
+        setComment('')
+      }
+      else {
+        setNotification(err)
+        setTimeout(()=> {
+          setNotification(null)
+        }, 5000)
+      }
+
+    }
+    const Notification = () => {
+      const style: React.CSSProperties = { color: 'red', paddingBottom: '1em', fontWeight: 'bold' }
+      if (!notification) {
+        return null
+      }
+      return (
+        <div style={style}>{notification}</div>
+      )
     }
     return (
       <div>
         <h2>Add new entry</h2>
+        <Notification />
         <form onSubmit={handleAddDiary}>
           <div>date <input value={date} onChange={({ target }) => setDate(target.value)} /></div>
           <div>visibility <input value={visibility} onChange={({ target }) => setVisiblity(target.value)} /></div>

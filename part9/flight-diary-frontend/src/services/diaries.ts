@@ -9,8 +9,19 @@ const getAll = async () => {
 }
 
 const create = async (obj: DiaryEntry) => {
-    const { data } = await axios.post<DiaryEntry>(baseUrl, obj)
-    return data
+    let err = null;
+    try {
+        const { data } = await axios.post<DiaryEntry>(baseUrl, obj)
+        return {data, err};
+        
+    } catch (error) {
+        if(axios.isAxiosError(error))
+        {
+            err = error.response?.data
+        }
+        return {data: null, err};
+    }
+
 }
 
 export default { getAll, create }
