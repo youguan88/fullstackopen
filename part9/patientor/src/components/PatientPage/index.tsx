@@ -13,17 +13,38 @@ const patientNameStyle: React.CSSProperties = {
     fontWeight: 'bold'
 };
 
-const PatientPage = ({patient}: props) => {
-    if(!patient)
-    {
+const PatientPage = ({ patient }: props) => {
+    if (!patient) {
         return null;
     }
+    const entries = patient.entries;
     return (
         <div style={style}>
             <div style={patientNameStyle}>{patient.name}</div>
             <div>gender: {patient.gender}</div>
             <div>ssn: {patient.ssn}</div>
             <div>occupation: {patient.occupation}</div>
+            {entries &&
+                (
+                    <div>
+                        <h3>entries</h3>
+                        {entries.map(entry => (
+                            <div>
+                                <div>{entry.date} {entry.description}</div>
+                                <ul>
+                                    {entry.diagnosisCodes && entry.diagnosisCodes.length > 0 && (
+                                        entry.diagnosisCodes.map(code => (
+                                            <li>
+                                                {code}
+                                            </li>
+                                        ))
+                                    )}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
+                )
+            }
         </div>
     );
 };
