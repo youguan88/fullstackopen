@@ -8,6 +8,15 @@ router.get('/', (_req, res) => {
     res.send(patientService.getEntriesWithExclusion());
 });
 
+router.get('/:id', (req, res) => {
+    try {
+        const id = req.params.id;
+        res.send(patientService.getEntryByID(id));
+    } catch (error) {
+        res.send(`Error retrieving patient: ${error}`);
+    }
+});
+
 router.post('/', (req, res) => {
     try {
 

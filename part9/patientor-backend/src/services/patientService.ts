@@ -12,10 +12,18 @@ const getEntriesWithExclusion = (): PatientWithExclusion[] => {
     }));
 };
 
+const getEntryByID = (id : string): Patient | undefined => {
+    const patient = data.find(x=> x.id === id);
+    if (!patient){
+        return undefined;
+    }
+    return patient;
+};
+
 const addEntry = (obj: NewPatientEntry): Patient => {
     const newObj = { ...obj, id: uuid() };
     data.push(newObj);
     return newObj;
 };
 
-export default { getEntries, getEntriesWithExclusion, addEntry };
+export default { getEntries, getEntriesWithExclusion, addEntry, getEntryByID };
