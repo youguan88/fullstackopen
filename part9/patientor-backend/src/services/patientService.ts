@@ -7,8 +7,8 @@ const getEntries = (): Patient[] => {
 };
 
 const getEntriesWithExclusion = (): PatientWithExclusion[] => {
-    return data.map(({ id, name, dateOfBirth, gender, occupation }) => ({
-        id, name, dateOfBirth, gender, occupation
+    return data.map(({ id, name, dateOfBirth, gender, occupation, entries }) => ({
+        id, name, dateOfBirth, gender, occupation, entries
     }));
 };
 
