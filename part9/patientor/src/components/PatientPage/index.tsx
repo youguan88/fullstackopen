@@ -1,7 +1,8 @@
-import { Patient } from "../../types";
+import { Diagnosis, Patient } from "../../types";
 
 interface props {
-    patient: Patient | undefined
+    patient: Patient | undefined,
+    diagnoses: Diagnosis[] | undefined
 }
 
 const style: React.CSSProperties = {
@@ -13,8 +14,8 @@ const patientNameStyle: React.CSSProperties = {
     fontWeight: 'bold'
 };
 
-const PatientPage = ({ patient }: props) => {
-    if (!patient) {
+const PatientPage = ({ patient, diagnoses }: props) => {
+    if (!patient || !diagnoses) {
         return null;
     }
     const entries = patient.entries;
@@ -33,11 +34,15 @@ const PatientPage = ({ patient }: props) => {
                                 <div>{entry.date} {entry.description}</div>
                                 <ul>
                                     {entry.diagnosisCodes && entry.diagnosisCodes.length > 0 && (
-                                        entry.diagnosisCodes.map(code => (
-                                            <li>
-                                                {code}
-                                            </li>
-                                        ))
+                                        entry.diagnosisCodes.map(code => {
+                                            const diagnosis = diagnoses.find(diagnosis => diagnosis.code === code);
+                                            return (
+                                                <li>
+                                                    {code}
+                                                    {diagnosis && (` ${diagnosis.name}`)}
+                                                </li>
+                                            );
+                                        })
                                     )}
                                 </ul>
                             </div>
