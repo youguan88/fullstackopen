@@ -1,5 +1,5 @@
 import data from "../../data/patients";
-import { Patient, PatientWithExclusion, NewPatientEntry } from "../types";
+import { Patient, PatientWithExclusion, NewPatientEntry, EntryWithoutId, Entry } from "../types";
 import { v1 as uuid } from 'uuid';
 
 const getEntries = (): Patient[] => {
@@ -15,7 +15,7 @@ const getEntriesWithExclusion = (): PatientWithExclusion[] => {
 const getEntryByID = (id : string): Patient | undefined => {
     const patient = data.find(x=> x.id === id);
     if (!patient){
-        return undefined;
+        throw new Error(`Unable to find patient with id ${id}`);
     }
     return patient;
 };
@@ -26,4 +26,20 @@ const addEntry = (obj: NewPatientEntry): Patient => {
     return newObj;
 };
 
-export default { getEntries, getEntriesWithExclusion, addEntry, getEntryByID };
+const addEntryDetail = (id: Patient["id"], obj: EntryWithoutId) : Entry => {
+    if (!obj) {
+        throw new Error(`Invalid entry detail provided`);
+    }
+    const newObj = {... obj, id: uuid()};
+    const patient = data.find(x=> x.id === id);
+    if (patient)
+    {
+        patient.entries.push(newObj);
+    }
+    else {
+        throw new Error(`Unable to find patient with id ${id}`);
+    }
+    return newObj;
+};
+
+export default { getEntries, getEntriesWithExclusion, addEntry, getEntryByID, addEntryDetail };
