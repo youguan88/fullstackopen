@@ -24,7 +24,7 @@ router.post('/', (req, res) => {
         const addedEntry = patientService.addEntry(newPatientEntry);
         res.json(addedEntry);
     } catch (error) {
-        res.send("Error adding patient").end(400);
+        res.status(400).send("Error adding patient");
     }
 });
 
@@ -35,7 +35,7 @@ router.post('/:id/entries', (req, res) => {
         const addedEntryDetail: EntryWithoutId = patientService.addEntryDetail(id, newEntryDetail);
         res.json(addedEntryDetail);
     } catch (error) {
-        res.send(`Error adding patient entry due to ${error}}`).end(400);
+        res.status(400).send(`${error}`);
     }
 });
 

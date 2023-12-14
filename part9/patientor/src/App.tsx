@@ -1,9 +1,6 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { Route, Link, Routes, useMatch } from "react-router-dom";
 import { Button, Divider, Container, Typography } from '@mui/material';
-
-import { apiBaseUrl } from "./constants";
 import { Diagnosis, Patient } from "./types";
 
 import patientService from "./services/patients";
@@ -16,8 +13,6 @@ const App = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
   useEffect(() => {
-    void axios.get<void>(`${apiBaseUrl}/ping`);
-
     const fetchPatientList = async () => {
       const patients = await patientService.getAll();
       setPatients(patients);

@@ -149,29 +149,27 @@ function parseEntries(entries: unknown): Entry[] {
     return entries;
 }
 
-const isEntryType = (type: unknown): type is EntryType => {
-    if (typeof type !== 'string') {
-        throw new Error('EntryType should be in string fromat');
-    }
+const isEntryType = (type: string): type is EntryType => {
     return Object.values(EntryType).map(x => x.toString()).includes(type);
 };
 
 function parseType(type: unknown) {
-    if (!isEntryType(type)) {
+    if (!isString(type) || !isEntryType(type)) {
         throw new Error('Incorrect type');
     }
     return type;
 }
 
-const isHealthCheckRating = (healthCheckRating: unknown): healthCheckRating is HealthCheckRating => {
-    if (typeof healthCheckRating !== 'string') {
-        throw new Error('EntryType should be in string fromat');
-    }
-    return Object.values(HealthCheckRating).map(x => x.toString()).includes(healthCheckRating);
+const isHealthCheckRating = (healthCheckRating: number): healthCheckRating is HealthCheckRating => {
+    return Object.values(HealthCheckRating).map(x => x.toString()).includes(healthCheckRating.toString());
+};
+
+const isNumber = (x: unknown): x is number => {
+    return typeof x === 'number';
 };
 
 function parseHealthCheckRating(healthCheckRating: unknown): HealthCheckRating {
-    if (!isHealthCheckRating(healthCheckRating)) {
+    if (!isNumber(healthCheckRating) || !isHealthCheckRating(healthCheckRating)) {
         throw new Error('Incorrect healthCheckRating provided');
     }
     return healthCheckRating;
@@ -192,7 +190,7 @@ function parseSpecialist(specialist: unknown): string {
 }
 
 const isDiagnosisCodes = (diagnosisCodes: unknown): diagnosisCodes is Array<Diagnosis['code']> => {
-    return (Array.isArray(diagnosisCodes) && diagnosisCodes.every(code => code instanceof String));
+    return (Array.isArray(diagnosisCodes) && diagnosisCodes.every(code => isString(code)));
 };
 
 function parseDiagnosisCodes(diagnosisCodes: unknown): Array<Diagnosis['code']> {
