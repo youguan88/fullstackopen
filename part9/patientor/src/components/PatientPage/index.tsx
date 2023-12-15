@@ -4,9 +4,8 @@ import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 import WorkIcon from '@mui/icons-material/Work';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import React, { useEffect, useState } from "react";
-import { Alert, Box, Button, TextField } from "@mui/material";
-import PatientService from '../../services/patients';
-import { AxiosError } from "axios";
+import { Alert } from "@mui/material";
+import { NewEntry } from "./newEntry";
 
 interface props {
     patient: Patient | undefined,
@@ -115,71 +114,6 @@ const OccupationalHealthcareEntry: React.FC<{ entry: EntryWithoutId, diagnoses: 
     }
 };
 
-const NewEntry: React.FC<{
-    patient: Patient,
-    setNotification: React.Dispatch<React.SetStateAction<string>>,
-    setEntries: React.Dispatch<React.SetStateAction<EntryWithoutId[]>>
-}>
-    = ({ patient, setNotification, setEntries }) => {
-        const [description, setDescription] = useState('');
-        const [date, setDate] = useState('');
-        const [specialist, setSpecialist] = useState('');
-        const [healthCheckRating, setHealthCheckRating] = useState('');
-        const [diagnosisCodes, setDiagnosisCodes] = useState('');
-        const formStyle: React.CSSProperties = {
-            border: '1px black dotted'
-        };
-        const descriptionStyle: React.CSSProperties = {
-            fontSize: '0.75em',
-            color: 'grey'
-        };
-
-        const handleAddEntry = async (event: React.SyntheticEvent) => {
-            event.preventDefault();
-            const newEntry: EntryWithoutId = {
-                type: "HealthCheck",
-                date: date,
-                description: description,
-                healthCheckRating: Number(healthCheckRating),
-                specialist: specialist,
-                diagnosisCodes: diagnosisCodes === '' ? undefined : diagnosisCodes.split(',')
-            };
-            try {
-                const addedEntry = await PatientService.addEntry(patient.id, newEntry);
-                setEntries(patient.entries.concat(addedEntry));
-            } catch (error) {
-                console.log(error);
-                if (error instanceof AxiosError && error.response) {
-                    setNotification(error.response.data);
-                    setTimeout(() => {
-                        setNotification('');
-                    }, 5000);
-                }
-            }
-        };
-
-        return (
-            <form style={formStyle} onSubmit={handleAddEntry}>
-                <h3>New HealthCheck entry</h3>
-                <div style={descriptionStyle}>Description</div>
-                <TextField fullWidth variant="standard" value={description} onChange={(event) => { setDescription(event.target.value); }} />
-                <div style={descriptionStyle}>Date</div>
-                <TextField fullWidth variant="standard" value={date} onChange={(event) => { setDate(event.target.value); }} />
-                <div style={descriptionStyle}>Specialist</div>
-                <TextField fullWidth variant="standard" value={specialist} onChange={(event) => { setSpecialist(event.target.value); }} />
-                <div style={descriptionStyle}>Healthcheck rating</div>
-                <TextField fullWidth variant="standard" value={healthCheckRating} onChange={(event) => { setHealthCheckRating(event.target.value); }} />
-                <div style={descriptionStyle}>Diagnosis codes</div>
-                <TextField fullWidth variant="standard" value={diagnosisCodes} onChange={(event) => { setDiagnosisCodes(event.target.value); }} />
-                <Box display="flex" justifyContent="flex-end">
-                    <Button variant="contained" color="error">Cancel</Button>
-                    <Button type="submit" variant="contained" color="primary" sx={{ marginLeft: 'auto' }}>Add</Button>
-                </Box>
-            </form>
-
-        );
-    };
-
 const Notification: React.FC<({ notification: string })> = ({ notification }) => {
     if (notification === '') {
         return null;
@@ -188,7 +122,6 @@ const Notification: React.FC<({ notification: string })> = ({ notification }) =>
         <Alert severity="error">{notification}</Alert>
     );
 };
-
 
 const PatientPage = ({ patient, diagnoses }: props) => {
     const [notification, setNotification] = useState('');
@@ -208,7 +141,7 @@ const PatientPage = ({ patient, diagnoses }: props) => {
             <div>ssn: {patient.ssn}</div>
             <div>occupation: {patient.occupation}</div>
             <Notification notification={notification} />
-            <NewEntry patient={patient} setNotification={setNotification} setEntries={setEntries} />
+            <NewEntry patient={patient} setNotification={setNotification} entries={entries} setEntries={setEntries} />
             {entries &&
                 (
                     <div>

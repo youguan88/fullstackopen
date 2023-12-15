@@ -71,3 +71,9 @@ type UnionOmit<T, K extends string | number | symbol> = T extends unknown ? Omit
 export type EntryWithoutId = UnionOmit<Entry, 'id'>;
 
 export type PatientFormValues = Omit<Patient, "id">;
+
+export enum EntryType {
+  HealthCheck = 'HealthCheck',
+  Hospital = 'Hospital',
+  OccupationalHealthcare = 'OccupationalHealthcare'
+}

@@ -205,9 +205,11 @@ const isDischarge = (discharge: unknown): discharge is Discharge => {
         return false;
     }
     if ('date' in discharge && 'criteria' in discharge) {
-        return (!isString(discharge.date) && isString(discharge.criteria));
+        return (isString(discharge.date) && isString(discharge.criteria));
     }
-    return false;
+    else{
+        return false;
+    }
 };
 
 function parseDischarge(discharge: unknown): Discharge {
@@ -222,9 +224,11 @@ const isSickLeave = (sickLeave: unknown): sickLeave is SickLeave => {
         return false;
     }
     if ('startDate' in sickLeave && 'endDate' in sickLeave && isString(sickLeave.startDate) && isString(sickLeave.endDate)) {
-        return (!isDate(sickLeave.startDate) && isDate(sickLeave.endDate));
+        return (isDate(sickLeave.startDate) && isDate(sickLeave.endDate));
     }
-    return false;
+    else{
+        return false;
+    }
 };
 
 function parseSickLeave(sickLeave: unknown): SickLeave {
