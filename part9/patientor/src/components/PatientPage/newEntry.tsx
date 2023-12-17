@@ -1,16 +1,25 @@
 import { useState } from "react";
-import { EntryWithoutId, Patient } from "../../types";
-import { ToggleButton, TextField, Box, Button, InputLabel, Select, MenuItem } from "@mui/material";
+import { Diagnosis, EntryWithoutId, Patient, HealthCheckRating } from "../../types";
+import { ToggleButton, TextField, Box, Button, InputLabel, Select, MenuItem, SelectChangeEvent } from "@mui/material";
 import { AxiosError } from "axios";
 import PatientService from '../../services/patients';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs from "dayjs";
 
-export const NewEntry: React.FC<{ patient: Patient, setNotification: React.Dispatch<React.SetStateAction<string>>, entries: EntryWithoutId[],  setEntries: React.Dispatch<React.SetStateAction<EntryWithoutId[]>> }>
-    = ({ patient, setNotification, entries, setEntries }) => {
+export const NewEntry: React.FC<{
+    patient: Patient,
+    setNotification: React.Dispatch<React.SetStateAction<string>>,
+    entries: EntryWithoutId[],
+    setEntries: React.Dispatch<React.SetStateAction<EntryWithoutId[]>>,
+    diagnoses: Diagnosis[]
+}>
+    = ({ patient, setNotification, entries, setEntries, diagnoses }) => {
         const [description, setDescription] = useState('');
         const [date, setDate] = useState('');
         const [specialist, setSpecialist] = useState('');
+        const codeList = Object.entries(HealthCheckRating).map(([value])=>({value})).filter(x=> isNaN(Number(x.value)));
         const [healthCheckRating, setHealthCheckRating] = useState('');
-        const [diagnosisCodes, setDiagnosisCodes] = useState('');
+        const [diagnosisCodes, setDiagnosisCodes] = useState<Array<Diagnosis['code']>>([]);
         const [selected, setSelected] = useState(false);
         const [entrySelected, setEntrySelected] = useState('HealthCheck');
         const [dischargeDate, setDischargeDate] = useState('');
@@ -28,7 +37,6 @@ export const NewEntry: React.FC<{ patient: Patient, setNotification: React.Dispa
 
         const handleAddEntry = async (event: React.SyntheticEvent) => {
             event.preventDefault();
-
             const newEntry = (): EntryWithoutId => {
                 switch (entrySelected) {
                     case 'HealthCheck':
@@ -36,9 +44,9 @@ export const NewEntry: React.FC<{ patient: Patient, setNotification: React.Dispa
                             type: 'HealthCheck',
                             date: date,
                             description: description,
-                            healthCheckRating: Number(healthCheckRating),
+                            healthCheckRating: HealthCheckRating[healthCheckRating as keyof typeof HealthCheckRating],
                             specialist: specialist,
-                            diagnosisCodes: diagnosisCodes === '' ? undefined : diagnosisCodes.split(','),
+                            diagnosisCodes: diagnosisCodes
 
                         };
                     case 'Hospital':
@@ -47,7 +55,7 @@ export const NewEntry: React.FC<{ patient: Patient, setNotification: React.Dispa
                             date: date,
                             description: description,
                             specialist: specialist,
-                            diagnosisCodes: diagnosisCodes === '' ? undefined : diagnosisCodes.split(','),
+                            diagnosisCodes: diagnosisCodes,
                             discharge: {
                                 criteria: dischargeCriteria,
                                 date: dischargeDate
@@ -59,7 +67,7 @@ export const NewEntry: React.FC<{ patient: Patient, setNotification: React.Dispa
                             date: date,
                             description: description,
                             specialist: specialist,
-                            diagnosisCodes: diagnosisCodes === '' ? undefined : diagnosisCodes.split(','),
+                            diagnosisCodes: diagnosisCodes,
                             employerName: employerName,
                             sickLeave: sickLeaveStartDate === '' || sickLeaveEndDate === '' ? undefined : {
                                 startDate: sickLeaveStartDate,
@@ -78,7 +86,7 @@ export const NewEntry: React.FC<{ patient: Patient, setNotification: React.Dispa
                 setDate('');
                 setSpecialist('');
                 setHealthCheckRating('');
-                setDiagnosisCodes('');
+                setDiagnosisCodes([]);
                 setDischargeDate('');
                 setDischargeCriteria('');
                 setEmployerName('');
@@ -94,6 +102,11 @@ export const NewEntry: React.FC<{ patient: Patient, setNotification: React.Dispa
                 }
             }
         };
+
+        const addDiagnosisCodeToState = (event : SelectChangeEvent<string|string[]>)  => {
+            const codes = diagnosisCodes.concat(event.target.value);
+            setDiagnosisCodes(Array.from(new Set(codes)));
+        }; 
 
         if (!selected) {
             return (
@@ -112,24 +125,37 @@ export const NewEntry: React.FC<{ patient: Patient, setNotification: React.Dispa
                         <div style={descriptionStyle}>Description</div>
                         <TextField fullWidth variant="standard" value={description} onChange={(event) => { setDescription(event.target.value); }} />
                         <div style={descriptionStyle}>Date</div>
-                        <TextField fullWidth variant="standard" value={date} onChange={(event) => { setDate(event.target.value); }} />
+                        <DatePicker value={date} onChange={(newValue: dayjs.ConfigType) => { setDate(newValue === undefined || newValue === null ? '' : newValue.toString()); }} />
                         <div style={descriptionStyle}>Specialist</div>
                         <TextField fullWidth variant="standard" value={specialist} onChange={(event) => { setSpecialist(event.target.value); }} />
                         {
                             entrySelected === "HealthCheck" && (
                                 <>
                                     <div style={descriptionStyle}>Healthcheck rating</div>
-                                    <TextField fullWidth variant="standard" value={healthCheckRating} onChange={(event) => { setHealthCheckRating(event.target.value); }} />
+                                    <Select autoWidth value={healthCheckRating} onChange={({target}) => setHealthCheckRating(target.value)}>
+                                        {codeList.map(x=> {
+                                            return (
+                                                <MenuItem key={x.value} value={x.value}>
+                                                    {x.value}
+                                                </MenuItem>);   
+                                        })}
+                                    </Select>
                                 </>
                             )
                         }
                         <div style={descriptionStyle}>Diagnosis codes</div>
-                        <TextField fullWidth variant="standard" value={diagnosisCodes} onChange={(event) => { setDiagnosisCodes(event.target.value); }} />
+                        <Select fullWidth multiple value={diagnosisCodes} onChange={addDiagnosisCodeToState}>
+                            {Object.values(diagnoses).map(x => {
+                                return (<MenuItem key={x.code} value={x.code}>
+                                    {x.code} - {x.name}
+                                </MenuItem>);
+                            })}
+                        </Select>
                         {
                             entrySelected === "Hospital" && (
                                 <>
                                     <div style={descriptionStyle}>Discharge date</div>
-                                    <TextField fullWidth variant="standard" value={dischargeDate} onChange={(event) => { setDischargeDate(event.target.value); }} />
+                                    <DatePicker value={dischargeDate} onChange={(newValue: dayjs.ConfigType) => { setDischargeDate(newValue === undefined || newValue === null ? '' : newValue.toString()); }} />
                                     <div style={descriptionStyle}>Discharge criteria</div>
                                     <TextField fullWidth variant="standard" value={dischargeCriteria} onChange={(event) => { setDischargeCriteria(event.target.value); }} />
                                 </>
@@ -141,9 +167,9 @@ export const NewEntry: React.FC<{ patient: Patient, setNotification: React.Dispa
                                     <div style={descriptionStyle}>Employer Name</div>
                                     <TextField fullWidth variant="standard" value={employerName} onChange={(event) => { setEmployerName(event.target.value); }} />
                                     <div style={descriptionStyle}>Sick Leave Start Date</div>
-                                    <TextField fullWidth variant="standard" value={sickLeaveStartDate} onChange={(event) => { setSickLeaveStartDate(event.target.value); }} />
+                                    <DatePicker value={sickLeaveStartDate} onChange={(newValue: dayjs.ConfigType) => { setSickLeaveStartDate(newValue === undefined || newValue === null ? '' : newValue.toString()); }} />
                                     <div style={descriptionStyle}>Sick Leave End Date</div>
-                                    <TextField fullWidth variant="standard" value={sickLeaveEndDate} onChange={(event) => { setSickLeaveEndDate(event.target.value); }} />
+                                    <DatePicker value={sickLeaveEndDate} onChange={(newValue: dayjs.ConfigType) => { setSickLeaveEndDate(newValue === undefined || newValue === null ? '' : newValue.toString()); }} />
                                 </>
                             )
                         }

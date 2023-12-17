@@ -141,7 +141,7 @@ const PatientPage = ({ patient, diagnoses }: props) => {
             <div>ssn: {patient.ssn}</div>
             <div>occupation: {patient.occupation}</div>
             <Notification notification={notification} />
-            <NewEntry patient={patient} setNotification={setNotification} entries={entries} setEntries={setEntries} />
+            <NewEntry patient={patient} setNotification={setNotification} entries={entries} setEntries={setEntries} diagnoses={diagnoses}/>
             {entries &&
                 (
                     <div>
