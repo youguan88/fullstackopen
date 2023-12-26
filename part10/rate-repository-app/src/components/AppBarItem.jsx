@@ -1,9 +1,16 @@
-import { Pressable } from 'react-native';
+import { Pressable, Text, StyleSheet } from 'react-native';
+import theme from './theme';
+
+const styles = StyleSheet.create({
+    text: {
+        color: theme.colors.barText
+    }
+});
 
 const AppBarItem = ({content}) => {
     return (
         <Pressable>
-            {content}
+            <Text style={styles.text}>{content}</Text>
         </Pressable>
     );
 }

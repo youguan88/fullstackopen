@@ -6,8 +6,8 @@ import AppBarItem from './AppBarItem';
 const styles = StyleSheet.create({
     container: {
         paddingTop: Constants.statusBarHeight,
-        backgroundColor: theme.colors.backgroundPrimary,
-        color: theme.colors.backgroundTextPrimary
+        backgroundColor: theme.colors.bar,
+        color: theme.colors.barText
     }
 });
 
