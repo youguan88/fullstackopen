@@ -1,5 +1,6 @@
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
 import theme from './theme';
+import Text from './Text';
 
 const styles = StyleSheet.create({
     container: {
@@ -26,12 +27,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         alignItems: 'center'
     },
-    mainText: {
-        fontWeight: 'bold',
-        fontSize: '1em',
-    },
-    secondaryText: {
-        color: theme.colors.textSecondary,
+    padding: {
         paddingTop: '1em',
         paddingBottom: '1em'
     },
@@ -42,7 +38,6 @@ const styles = StyleSheet.create({
         padding: '0.5em',
         borderRadius: '0.5em'
     }
-
 });
 
 const ItemKeyValue = ({ description, value }) => {
@@ -50,8 +45,8 @@ const ItemKeyValue = ({ description, value }) => {
 
     return (
         <View style={styles.bottomColumnContainer}>
-            <Text style={styles.mainText}>{numberValue}</Text>
-            <Text style={styles.secondaryText}>{description}</Text>
+            <Text fontWeight="bold" fontSize="subheading">{numberValue}</Text>
+            <Text color="textSecondary">{description}</Text>
         </View>
     );
 }
@@ -62,8 +57,8 @@ const RepositoryItem = ({ item }) => {
             <View style={styles.topRowContainer}>
                 <Image style={styles.image} source={{ uri: item.ownerAvatarUrl }} resizeMode='contain' />
                 <View style={styles.topColumnContainer}>
-                    <Text style={styles.mainText}>{item.fullName}</Text>
-                    <Text style={styles.secondaryText}>{item.description}</Text>
+                    <Text fontWeight="bold" fontSize="subheading">{item.fullName}</Text>
+                    <Text color="textSecondary" style={styles.padding}>{item.description}</Text>
                     <Text style={styles.language}>{item.language}</Text>
                 </View>
             </View>
