@@ -3,6 +3,7 @@ import Constants from 'expo-constants';
 import theme from './theme';
 import AppBarItem from './AppBarItem';
 import { Link } from 'react-router-native';
+import { ScrollView } from 'react-native-web';
 
 const styles = StyleSheet.create({
     container: {
@@ -10,7 +11,7 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.bar,
         color: theme.colors.barText,
         display: 'flex',
-        flexDirection:'row',
+        flexDirection: 'row',
         flexGrow: 0,
     },
     link: {
@@ -21,8 +22,10 @@ const styles = StyleSheet.create({
 const AppBar = () => {
     return (
         <View style={styles.container}>
-            <Link to="/" style={styles.link}><AppBarItem content='Repositories' /></Link>
-            <Link to="/signin" style={styles.link}><AppBarItem content='Sign in' /></Link>
+            <ScrollView horizontal>
+                <Link to="/" style={styles.link}><AppBarItem content='Repositories' /></Link>
+                <Link to="/signin" style={styles.link}><AppBarItem content='Sign in' /></Link>
+            </ScrollView>
         </View>
     );
 };
