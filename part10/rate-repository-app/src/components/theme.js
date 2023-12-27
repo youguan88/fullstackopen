@@ -6,7 +6,8 @@ const theme = {
       main: '#e1e4e8',
       item: '#FFFFFF',
       textPrimary: '#24292e',
-      textSecondary: '#586069'
+      textSecondary: '#586069',
+      textError: '#d73a4a'
     },
     fontSizes: {
       body: 14,
