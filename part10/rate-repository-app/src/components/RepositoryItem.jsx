@@ -53,7 +53,7 @@ const ItemKeyValue = ({ description, value }) => {
 
 const RepositoryItem = ({ item }) => {
     return (
-        <View style={styles.container}>
+        <View style={styles.container} testID="repositoryItem">
             <View style={styles.topRowContainer}>
                 <Image style={styles.image} source={{ uri: item.ownerAvatarUrl }} resizeMode='contain' />
                 <View style={styles.topColumnContainer}>
