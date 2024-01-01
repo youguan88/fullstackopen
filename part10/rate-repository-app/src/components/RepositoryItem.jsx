@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
         color: theme.colors.item,
         alignSelf: 'flex-start',
         padding: '0.5em',
-        borderRadius: '0.5em'
+        borderRadius: 0.5
     }
 });
 

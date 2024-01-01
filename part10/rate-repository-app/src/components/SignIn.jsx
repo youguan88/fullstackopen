@@ -33,7 +33,7 @@ const styles = StyleSheet.create(
   }
 )
 
-const validationSchema = yup.object().shape({
+export const validationSchema = yup.object().shape({
   username: yup.string().required('Username is required'),
   password: yup.string().required('Password is required')
 })
@@ -47,6 +47,14 @@ const SignInForm = ({ onSubmit }) => {
         <Text style={styles.button}>Sign in</Text>
       </Pressable>
     </View>
+  )
+}
+
+export const SignInFormContainer = ({onSubmit, initialValues, validationSchema}) => {
+  return (
+    <Formik onSubmit={onSubmit} initialValues={initialValues} validationSchema={validationSchema}>
+      {({ handleSubmit }) => <SignInForm onSubmit={handleSubmit} />}
+    </Formik>
   )
 }
 
@@ -65,9 +73,7 @@ const SignIn = () => {
   };
 
   return (
-    <Formik onSubmit={onSubmit} initialValues={initialValues} validationSchema={validationSchema}>
-      {({ handleSubmit }) => <SignInForm onSubmit={handleSubmit} />}
-    </Formik>
+    <SignInFormContainer onSubmit={onSubmit} initialValues={initialValues} validationSchema={validationSchema} />
   )
 };
 
