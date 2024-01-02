@@ -39,3 +39,12 @@ export const GET_USER = gql`
   }
 }
 `
+export const GET_SINGLE_REPOSITORY = gql`
+query Repository($repositoryId: ID!) {
+  repository(id: $repositoryId) {
+    id
+    fullName
+    url
+  }
+}
+`

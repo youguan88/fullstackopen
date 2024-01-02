@@ -1,11 +1,13 @@
-import { View, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet, Image, Pressable, Linking } from 'react-native';
 import theme from './theme';
 import Text from './Text';
+import useSingleRepository from '../hooks/useSingleRepository';
+import { useEffect, useState } from 'react';
 
 const styles = StyleSheet.create({
     container: {
         backgroundColor: theme.colors.item,
-        display: 'flex'
+        display: 'flex',
     },
     image: {
         width: '4em',
@@ -14,6 +16,7 @@ const styles = StyleSheet.create({
     },
     topRowContainer: {
         flexDirection: 'row',
+        margin: 10
     },
     topColumnContainer: {
         flexDirection: 'column',
@@ -21,7 +24,8 @@ const styles = StyleSheet.create({
     },
     bottomRowContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-around'
+        justifyContent: 'space-around',
+        margin: 10
     },
     bottomColumnContainer: {
         flexDirection: 'column',
@@ -31,12 +35,19 @@ const styles = StyleSheet.create({
         paddingTop: '1em',
         paddingBottom: '1em'
     },
-    language : {
+    language: {
         backgroundColor: theme.colors.primary,
         color: theme.colors.item,
         alignSelf: 'flex-start',
         padding: '0.5em',
-        borderRadius: 0.5
+        borderRadius: 5
+    },
+    github: {
+        textAlign: 'center',
+        backgroundColor: theme.colors.primary,
+        padding: '1em',
+        margin: 10,
+        color: theme.colors.barText
     }
 });
 
@@ -51,7 +62,28 @@ const ItemKeyValue = ({ description, value }) => {
     );
 }
 
-const RepositoryItem = ({ item }) => {
+
+const GitHubLink = (item) => {
+    const {data} = useSingleRepository(item)
+    const [url, setUrl] = useState('')
+
+    useEffect(() => {
+        if(data)
+        {
+            setUrl(data.repository.url)
+        }
+    }, [data])
+
+    return (
+        <Pressable onPress={()=>Linking.openURL(url)}><Text style={styles.github}>Open in GitHub</Text></Pressable>
+    )
+}
+
+const RepositoryItem = ({ item, single }) => {
+    if(!item)
+    {
+        return null;
+    }
     return (
         <View style={styles.container} testID="repositoryItem">
             <View style={styles.topRowContainer}>
@@ -68,6 +100,7 @@ const RepositoryItem = ({ item }) => {
                 <ItemKeyValue description="Reviews" value={item.reviewCount} />
                 <ItemKeyValue description="Rating" value={item.ratingAverage} />
             </View>
+            {single && (<GitHubLink item={item}/>)}
         </View>
     )
 }
