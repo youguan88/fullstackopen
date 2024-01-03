@@ -26,15 +26,15 @@ export const RepositoryListContainer = ({ repositories }) => {
             data={repositoryNodes}
             ItemSeparatorComponent={ItemSeparator}
             renderItem={({ item }) => (
-                <Pressable onPress={()=>handleSingleRepository(item)}>
-                <RepositoryItem item={item} />
+                <Pressable onPress={() => handleSingleRepository(item)}>
+                    <RepositoryItem item={item} />
                 </Pressable>
             )}
         />
     );
 }
 
-const RepositoryList = ({repositories}) => {
+const RepositoryList = ({ repositories }) => {
     return <RepositoryListContainer repositories={repositories} />
 };
 

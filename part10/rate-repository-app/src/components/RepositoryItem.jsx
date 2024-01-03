@@ -1,8 +1,6 @@
 import { View, StyleSheet, Image, Pressable, Linking } from 'react-native';
 import theme from './theme';
 import Text from './Text';
-import useSingleRepository from '../hooks/useSingleRepository';
-import { useEffect, useState } from 'react';
 
 const styles = StyleSheet.create({
     container: {
@@ -63,25 +61,16 @@ const ItemKeyValue = ({ description, value }) => {
 }
 
 
-const GitHubLink = (item) => {
-    const {data} = useSingleRepository(item)
-    const [url, setUrl] = useState('')
-
-    useEffect(() => {
-        if(data)
-        {
-            setUrl(data.repository.url)
-        }
-    }, [data])
-
+const GitHubLink = ({ item }) => {
     return (
-        <Pressable onPress={()=>Linking.openURL(url)}><Text style={styles.github}>Open in GitHub</Text></Pressable>
+        <Pressable onPress={() => Linking.openURL(item.url)}>
+            <Text style={styles.github}>Open in GitHub</Text>
+        </Pressable>
     )
 }
 
 const RepositoryItem = ({ item, single }) => {
-    if(!item)
-    {
+    if (!item) {
         return null;
     }
     return (
@@ -100,7 +89,7 @@ const RepositoryItem = ({ item, single }) => {
                 <ItemKeyValue description="Reviews" value={item.reviewCount} />
                 <ItemKeyValue description="Rating" value={item.ratingAverage} />
             </View>
-            {single && (<GitHubLink item={item}/>)}
+            {single && (<GitHubLink item={item} />)}
         </View>
     )
 }
