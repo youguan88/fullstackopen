@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const GET_REPOSITORIES = gql`
-query {
-    repositories {
+query epositories($orderBy: AllRepositoriesOrderBy, $orderDirection: OrderDirection){
+    repositories(orderBy: $orderBy, orderDirection: $orderDirection) {
       totalCount
       pageInfo {
         hasPreviousPage
@@ -45,6 +45,16 @@ query Repository($repositoryId: ID!) {
     id
     fullName
     url
+    ownerName
+    name
+    createdAt
+    ratingAverage
+    reviewCount
+    stargazersCount
+    ownerAvatarUrl
+    description
+    language
+    forksCount
     reviews {
       edges {
         node {

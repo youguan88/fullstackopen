@@ -72,15 +72,15 @@ const ReviewItem = ({ review }) => {
     )
 };
 
-const SingleRepository = ({ item }) => {
-    const { data } = useSingleRepository(item)
+const SingleRepository = ({ id }) => {
+    const { data } = useSingleRepository(id)
     const [reviews, setReviews] = useState([])
     const [repository, setRepository] = useState(null)
 
     useEffect(() => {
         if (data) {
             setReviews(data.repository.reviews.edges.map(edge => edge.node))
-            setRepository({ ...item, url: data.repository.url })
+            setRepository(data.repository)
         }
     }, [data])
 
