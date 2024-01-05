@@ -27,11 +27,10 @@ const styles = StyleSheet.create({
 
 const AppBar = () => {
     const [user, setUser] = useState(null);
-    const {data} = useUser();
-    
+    const { data } = useUser();
+
     useEffect(() => {
-        if (data)
-        {
+        if (data) {
             setUser(data.me)
         }
     }, [data])
@@ -50,7 +49,12 @@ const AppBar = () => {
             <ScrollView horizontal>
                 <Link to="/" style={styles.link}><AppBarItem content='Repositories' /></Link>
                 {!user && (<Link to="/signin" style={styles.link}><AppBarItem content='Sign in' /></Link>)}
-                {user && (<Link to="/" style={styles.link} onPress={handleSignOut}><AppBarItem content='Sign out' /></Link>)}
+                {user && (
+                    <>
+                        <Link to="/createReview" style={styles.link}><AppBarItem content='Create a review' /></Link>
+                        <Link to="/" style={styles.link} onPress={handleSignOut}><AppBarItem content='Sign out' /></Link>
+                    </>
+                )}
             </ScrollView>
         </View>
     );
