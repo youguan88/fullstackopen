@@ -48,7 +48,12 @@ const AppBar = () => {
         <View style={styles.container}>
             <ScrollView horizontal>
                 <Link to="/" style={styles.link}><AppBarItem content='Repositories' /></Link>
-                {!user && (<Link to="/signin" style={styles.link}><AppBarItem content='Sign in' /></Link>)}
+                {!user && (
+                    <>
+                        <Link to="/signin" style={styles.link}><AppBarItem content='Sign in' /></Link>
+                        <Link to="/signup" style={styles.link}><AppBarItem content='Sign up' /></Link>
+                    </>
+                )}
                 {user && (
                     <>
                         <Link to="/createReview" style={styles.link}><AppBarItem content='Create a review' /></Link>
