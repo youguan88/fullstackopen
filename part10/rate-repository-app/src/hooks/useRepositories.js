@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 import { GET_REPOSITORIES } from '../graphql/queries';
 
-const useRepositories = (orderSelection) => {
+const useRepositories = (orderSelection, filterText) => {
   const [repositories, setRepositories] = useState();
   let variables = {}
   if (orderSelection === "latest")
@@ -17,6 +17,7 @@ const useRepositories = (orderSelection) => {
   {
     variables =  {"orderBy": "RATING_AVERAGE", "orderDirection": "ASC"}
   }
+  variables.searchKeyword = filterText;
   const response = useQuery(GET_REPOSITORIES, { variables: variables, fetchPolicy: 'cache-and-network' });
   const fetchRepositories = async () => {
     if (!response.loading && response.data) {
