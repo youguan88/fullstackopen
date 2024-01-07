@@ -53,9 +53,9 @@ const styles = StyleSheet.create({
     }
 });
 
-const ItemSeparator = () => <View style={styles.separator} />;
+export const ItemSeparator = () => <View style={styles.separator} />;
 
-const ReviewItem = ({ review }) => {
+export const ReviewItem = ({ review }) => {
     return (
         <View style={styles.container}>
             <View style={styles.marginContainer}>
