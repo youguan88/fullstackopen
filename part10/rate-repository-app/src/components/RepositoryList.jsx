@@ -1,11 +1,11 @@
-import { FlatList, View, StyleSheet, Pressable } from 'react-native';
+import { FlatList, View, StyleSheet, Pressable, TextInput } from 'react-native';
 import RepositoryItem from './RepositoryItem';
 import { useNavigate } from 'react-router-native';
 import useRepositories from '../hooks/useRepositories';
-import { Picker, TextInput } from 'react-native-web';
 import { useState } from 'react';
 import React from 'react';
 import { useDebounce } from 'use-debounce';
+import { Picker } from '@react-native-picker/picker';
 
 const styles = StyleSheet.create({
     separator: {

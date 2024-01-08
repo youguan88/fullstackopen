@@ -1,7 +1,6 @@
 import Text from './Text';
-import { View } from 'react-native-web';
 import FormikTextInput from './FormikTextInput';
-import { Pressable, StyleSheet } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { Formik } from 'formik';
 import theme from './theme';
 import * as yup from 'yup'
@@ -18,16 +17,19 @@ const styles = StyleSheet.create(
     button: {
       backgroundColor: theme.colors.primary,
       color: theme.colors.barText,
-      borderRadius: '0.3em',
-      height: '5em',
+      borderRadius: 5,
+      height: 50,
+      marginTop: 1,
+      width: '50%',
+      textAlign: 'center',
+      textAlignVertical: 'center'
+    },
+    pressable : {
       display: 'flex',
-      justifyContent: 'center',
       alignItems: 'center',
-      marginTop: '1em'
     },
     container: {
-      padding: '1em',
-      paddingTop: '0',
+      padding: 10,
       backgroundColor: theme.colors.item
     }
   }
@@ -42,8 +44,8 @@ const SignInForm = ({ onSubmit }) => {
   return (
     <View style={styles.container}>
       <FormikTextInput name="username" placeholder="Username" />
-      <FormikTextInput name="password" placeholder="Password" secureTextEntry='true' />
-      <Pressable onPress={onSubmit}>
+      <FormikTextInput name="password" placeholder="Password" secureTextEntry={true} />
+      <Pressable onPress={onSubmit} style={styles.pressable}>
         <Text style={styles.button}>Sign in</Text>
       </Pressable>
     </View>

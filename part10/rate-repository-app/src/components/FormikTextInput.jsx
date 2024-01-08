@@ -1,6 +1,5 @@
 import { StyleSheet } from 'react-native';
 import { useField } from 'formik';
-
 import TextInput from './TextInput';
 import Text from './Text';
 import theme from './theme';
@@ -15,12 +14,13 @@ const styles = StyleSheet.create({
   },
   textInput: {
     borderStyle: 'solid',
-    borderWidth: '2px',
+    borderWidth: 2,
     borderColor: theme.colors.textSecondary,
-    height: '5em',
-    borderRadius: '0.3em',
-    marginTop: '1em',
-    paddingLeft: '1em',
+    height: 50,
+    borderRadius: 3,
+    marginTop: 5,
+    marginBottom: 5,
+    paddingLeft: 5,
     color: theme.colors.textSecondary,
     fontSize: theme.fontSizes.body
   }

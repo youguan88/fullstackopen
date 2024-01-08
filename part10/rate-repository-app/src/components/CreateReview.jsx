@@ -1,8 +1,7 @@
 import { Formik } from "formik"
-import { View, Text, StyleSheet } from "react-native-web"
 import * as yup from 'yup'
 import FormikTextInput from "./FormikTextInput"
-import { Pressable } from "react-native"
+import { Pressable, View, Text, StyleSheet } from "react-native"
 import theme from "./theme"
 import useCreateReview from "../hooks/useCreateReview"
 import { useNavigate } from "react-router-native"
@@ -26,16 +25,19 @@ const styles = StyleSheet.create(
         button: {
             backgroundColor: theme.colors.primary,
             color: theme.colors.barText,
-            borderRadius: '0.3em',
-            height: '5em',
+            borderRadius: 5,
+            height: 50,
+            marginTop: 1,
+            width: '50%',
+            textAlign: 'center',
+            textAlignVertical: 'center'
+          },
+          pressable : {
             display: 'flex',
-            justifyContent: 'center',
             alignItems: 'center',
-            marginTop: '1em'
-        },
+          },
         container: {
-            padding: '1em',
-            paddingTop: '0',
+            padding: 1,
             backgroundColor: theme.colors.item
         }
     }
@@ -48,7 +50,7 @@ export const CreateReviewForm = ({ onSubmit }) => {
             <FormikTextInput name="repositoryName" placeholder="Repository name" />
             <FormikTextInput name="rating" placeholder="Rating between 0 and 100" />
             <FormikTextInput name="text" placeholder="Review" />
-            <Pressable onPress={onSubmit}>
+            <Pressable onPress={onSubmit} style={styles.pressable}>
                 <Text style={styles.button}>Create a Review</Text>
             </Pressable>
         </View>

@@ -33,6 +33,7 @@ const Main = () => {
     }, [data])
     return (
         <View style={styles.container}>
+            {/* <AppBar user={user} /> */}
             <AppBar user={user} />
             <Routes>
                 <Route path='/' element={<RepositoryList />} />
@@ -40,7 +41,7 @@ const Main = () => {
                 <Route path='/signup' element={<SignUp />} />
                 <Route path='/createReview' element={<CreateReview />} />
                 <Route path='/repository/:id' element={<SingleRepository id={id}/>} />
-                <Route path='/reviews' element={<MyReviews user={user} />} />
+                <Route path='/reviews' element={<MyReviews/>} />
                 <Route path='*' element={<Navigate to='/' replace />} />
             </Routes>
         </View>

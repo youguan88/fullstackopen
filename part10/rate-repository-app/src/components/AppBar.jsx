@@ -1,24 +1,25 @@
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import Constants from 'expo-constants';
 import theme from './theme';
 import AppBarItem from './AppBarItem';
 import { Link } from 'react-router-native';
-import { ScrollView } from 'react-native-web';
 import useAuthStorage from '../hooks/useAuthStorage';
 import { useApolloClient } from '@apollo/client';
 
 const styles = StyleSheet.create({
     container: {
         paddingTop: Constants.statusBarHeight,
-        paddingLeft: '1em',
+        paddingLeft: 1,
         backgroundColor: theme.colors.bar,
         color: theme.colors.barText,
         display: 'flex',
         flexDirection: 'row',
         flexGrow: 0,
+        height: 70,
+        alignItems: 'center'
     },
     link: {
-        paddingRight: '1em'
+        paddingRight: 10
     }
 });
 

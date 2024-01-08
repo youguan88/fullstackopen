@@ -21,17 +21,17 @@ const styles = StyleSheet.create({
         flexGrow: 1,
     },
     rating: {
-        width: '4em',
-        height: '4em',
-        borderRadius: '2em',
+        width: 40,
+        height: 40,
+        borderRadius: 20,
         borderColor: theme.colors.primary,
-        borderWidth: '0.2em',
+        borderWidth: 5,
         color: theme.colors.primary,
         fontSize: theme.fontSizes.subheading,
         fontWeight: theme.fontWeights.bold,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
+        textAlign: 'center',
+        textAlignVertical: 'center',
+        marginRight: 5
     },
     rowContainer: {
         flexDirection: 'row',
@@ -62,7 +62,9 @@ export const ReviewItem = ({ review }) => {
                 <View style={styles.rowContainer}>
                     <Text style={styles.rating}>{review.rating}</Text>
                     <View style={styles.columnContainer}>
-                        <Text style={styles.username}>{review.user.username}</Text>
+                        <Text style={styles.username}>
+                            {review.user.username}
+                        </Text>
                         <Text style={styles.createdAt}>{format(review.createdAt, 'dd.MM.yyyy')}</Text>
                         <Text>{review.text}</Text>
                     </View>

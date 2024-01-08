@@ -8,8 +8,8 @@ const styles = StyleSheet.create({
         display: 'flex',
     },
     image: {
-        width: '4em',
-        height: '4em',
+        width: 80,
+        height: 80,
         borderRadius: 10
     },
     topRowContainer: {
@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
     },
     topColumnContainer: {
         flexDirection: 'column',
-        padding: '0.5em'
+        padding: 3
     },
     bottomRowContainer: {
         flexDirection: 'row',
@@ -30,20 +30,20 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     padding: {
-        paddingTop: '1em',
-        paddingBottom: '1em'
+        paddingTop: 10,
+        paddingBottom: 10
     },
     language: {
         backgroundColor: theme.colors.primary,
         color: theme.colors.item,
         alignSelf: 'flex-start',
-        padding: '0.5em',
+        padding: 0.5,
         borderRadius: 5
     },
     github: {
         textAlign: 'center',
         backgroundColor: theme.colors.primary,
-        padding: '1em',
+        padding: 1,
         margin: 10,
         color: theme.colors.barText
     }
