@@ -56,7 +56,7 @@ export class RepositoryListContainer extends React.Component {
         );
     };
 
-    render(repositories, orderSelection, setOrderSelection, filterText, setFilterText) {
+    render(repositories, orderSelection, setOrderSelection, filterText, setFilterText, onEndReach) {
 
         // Get the nodes from the edges array
         const repositoryNodes = repositories
@@ -77,6 +77,8 @@ export class RepositoryListContainer extends React.Component {
                         <RepositoryItem item={item} />
                     </Pressable>
                 )}
+                onEndReached={onEndReach}
+                onEndReachedThreshold={0.5}
             />
         );
     }
@@ -86,10 +88,13 @@ const RepositoryList = () => {
     const [orderSelection, setOrderSelection] = useState('latest');
     const [filterText, setFilterText] = useState('');
     const [debouncedFilterText] = useDebounce(filterText, 500);
-    const { repositories } = useRepositories(orderSelection, debouncedFilterText);
+    const { repositories, fetchMore } = useRepositories({orderSelection: orderSelection, debouncedFilterText: debouncedFilterText, first: 3});
     const container = new RepositoryListContainer
+    const onEndReach = () => {
+        fetchMore();
+      };
     return (
-        container.render(repositories, orderSelection, setOrderSelection, filterText, setFilterText)
+        container.render(repositories, orderSelection, setOrderSelection, filterText, setFilterText, onEndReach)
     )
 };
 

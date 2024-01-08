@@ -1,35 +1,37 @@
-import { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 import { GET_REPOSITORIES } from '../graphql/queries';
 
-const useRepositories = (orderSelection, filterText) => {
-  const [repositories, setRepositories] = useState();
+const useRepositories = ({orderSelection, filterText, first}) => {
   let variables = {}
-  if (orderSelection === "latest")
-  {
-    variables = {"orderBy": "CREATED_AT", "orderDirection": "DESC"}
+  if (orderSelection === "latest") {
+    variables = { "orderBy": "CREATED_AT", "orderDirection": "DESC" }
   }
-  else if (orderSelection === "highest-rated")
-  {
-    variables =  {"orderBy": "RATING_AVERAGE", "orderDirection": "DESC"}
+  else if (orderSelection === "highest-rated") {
+    variables = { "orderBy": "RATING_AVERAGE", "orderDirection": "DESC" }
   }
-  else
-  {
-    variables =  {"orderBy": "RATING_AVERAGE", "orderDirection": "ASC"}
+  else {
+    variables = { "orderBy": "RATING_AVERAGE", "orderDirection": "ASC" }
   }
   variables.searchKeyword = filterText;
-  const response = useQuery(GET_REPOSITORIES, { variables: variables, fetchPolicy: 'cache-and-network' });
-  const fetchRepositories = async () => {
-    if (!response.loading && response.data) {
-      setRepositories(response.data.repositories);
+  variables.first = first;
+  
+  const { data, loading, fetchMore, ...result } = useQuery(GET_REPOSITORIES, { variables: variables, fetchPolicy: 'cache-and-network' });
+
+  const handleFetchMore = () => {
+    const canFetchMore = !loading && data?.repositories.pageInfo.hasNextPage
+    if (!canFetchMore) {
+      return;
     }
+
+    fetchMore({
+      variables: {
+        after: data.repositories.pageInfo.endCursor,
+        ...variables,
+      },
+    });
   };
 
-  useEffect(() => {
-    fetchRepositories();
-  }, [response]);
-
-  return { repositories, refetch: fetchRepositories };
+  return { repositories: data?.repositories, fetchMore: handleFetchMore, loading, ...result };
 };
 
 export default useRepositories;

@@ -1,7 +1,6 @@
 import { FlatList, StyleSheet, View } from "react-native";
 import RepositoryItem from "./RepositoryItem";
 import useSingleRepository from "../hooks/useSingleRepository";
-import { useEffect, useState } from "react";
 import Text from "./Text";
 import theme from "./theme";
 import { format } from 'date-fns'
@@ -75,24 +74,25 @@ export const ReviewItem = ({ review }) => {
 };
 
 const SingleRepository = ({ id }) => {
-    const { data } = useSingleRepository(id)
-    const [reviews, setReviews] = useState([])
-    const [repository, setRepository] = useState(null)
+    const { repository, fetchMore } = useSingleRepository({ id, first: 3 })
 
-    useEffect(() => {
-        if (data) {
-            setReviews(data.repository.reviews.edges.map(edge => edge.node))
-            setRepository(data.repository)
-        }
-    }, [data])
+    const onEndReach = () => {
+        fetchMore()
+    }
+
+    const reviewNodes = repository
+    ? repository.reviews.edges.map(edge => edge.node)
+    : [];
 
     return (
         <FlatList
-            data={reviews}
+            data={reviewNodes}
             renderItem={({ item }) => <ReviewItem review={item} />}
             keyExtractor={({ id }) => id}
             ListHeaderComponent={() => <RepositoryItem item={repository} single={true} />}
             ItemSeparatorComponent={ItemSeparator}
+            onEndReached={onEndReach}
+            onEndReachedThreshold={0.5}
         />
     );
 };
